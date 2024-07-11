@@ -1,0 +1,4 @@
+first_trigger_at: 0
+trigger nr 5 at 8000
+
+trigger nr 7 at 12000

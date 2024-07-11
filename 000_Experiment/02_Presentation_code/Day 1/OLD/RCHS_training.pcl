@@ -1,0 +1,283 @@
+int ntrials; # number of trials
+string button; # get response button
+string RT; # get RT of Response in ms
+int Response; # get Response 1/0
+string hitormiss; # define if response was hit, miss, false alarm or correct rejection
+
+int stpnt = 810; 
+
+int trial_onset;
+int current_time;
+int fixcross_duration; int fix_trial_duration; int fix_clock;
+
+string vari; # variation of experiment rpl vs. ins # probably not necessary anymore
+int vio_trial; # variable for defintion of 0/1 if trial is violation or not
+int counter = 0; # counts trials in block
+string caption_old; # caption recieved from list (1,2,3,4,5,6,7)
+string caption_new; # changed number caption (0,4,5,6,7,8,9)
+string kind_of_violation; # for output, write level of violation
+string violation_number = "0"; # what number is used as violation
+
+int anzahl_blocks = 4; # number of blocks
+int block; # hat is the block
+array <string> block_names[anzahl_blocks] = {"Single","Triplet","Nonet","Correct"};
+array <string> level_names[anzahl_blocks] = {"LvL1","LvL2","LvL3","True"};
+
+# not sure yet #
+array <int> noise_50 [4] = {20,37,46,97}; 
+array <int> isi_durations[4] = {4850,5050,5450,5650};
+# varying isi for all possible durations, mean 5300 ms bzw. with 2100 ms blinking fixation crosses 7400 ms
+
+# -------------------
+# SIZE
+# ------------------- 
+## Full Screen
+int dheight = display_device.height();
+int dwidth  = display_device.width();
+
+#---------------------------------------------------------------
+# LOAD TRIAL FILE
+#---------------------------------------------------------------
+preset int vp; # name of subject, needs to be NEW, old files are not overwritten
+preset int list; # for each starting block (defined by vp= there are 50 diffrent posstibilties auf block orders, created from two concatted DeBruijn-sequences
+
+### diffrent stating blocks based on subject number/vp
+double vpd = double(vp);
+double fractal = vpd/4 - floor(vpd/4);
+if fractal == 0.25 then block = 1; #based on rest, if vp number is divided by 4
+elseif fractal == 0.5 then block = 2;
+elseif fractal == 0.75 then block = 3;
+else block = 4; end; 
+
+ntrials = 162;
+vari = "ins";
+
+# ---------------------------------------------------------------------------------#
+## not sure yert ##
+# find good break/isi times (start times not dividable by TR = 2000)
+double cumsum; int pause_total; int unequal_counter;
+loop int while_dur = 0 until while_dur == 1  begin
+	noise_50.shuffle();
+	isi_durations.shuffle();
+	cumsum = 0; unequal_counter = 0;
+	loop int di = 1 until di > isi_durations.count() begin
+		pause_total = noise_50[di] + isi_durations[di]+2100; 	
+		cumsum = cumsum + pause_total + ((di-1)*162*700); # calculate cummulative sum of isi and blok length to know, wenn the start
+		if cumsum/2000 != floor(cumsum/2000) then unequal_counter = unequal_counter + 1; end; # only if all starts are not equal to mutliple of TR...
+		di = di+1;
+	#	trial_number.set_caption(string(unequal_counter)); # for testing
+	#	trial_number.redraw();
+	#	number_trial.present();
+	end;
+	if unequal_counter == isi_durations.count() then while_dur = 1 end; # ... the code can continue
+end;
+
+
+# LOading all Inoput files
+array <string> numbers[ntrials*6][4]; # array with all numbers
+
+int count;
+sub # subroutine for loading the number input files
+	loading_input (int blk, input_file sub_input_file) 
+begin
+	string Input = "db_input_"+vari+"_"+level_names[blk]+".txt"; # filename
+	sub_input_file.open(Input); # open input file with filename
+	sub_input_file.set_delimiter(9);
+	count = 0;
+	array <string> all_input[ntrials][6];
+	loop until sub_input_file.end_of_file() || count == ntrials || !sub_input_file.last_succeeded() begin # read in all lines + columns of input file
+		count = count +1;
+		sub_input_file.set_delimiter(9);
+		all_input[count][1]=sub_input_file.get_string();
+		all_input[count][2]=sub_input_file.get_string();
+		all_input[count][3]=sub_input_file.get_string();
+		all_input[count][4]=sub_input_file.get_string();
+		all_input[count][5]=sub_input_file.get_string();
+		sub_input_file.set_delimiter(10);
+		all_input[count][6]=sub_input_file.get_string();
+	end;
+	sub_input_file.close();
+	loop int ci = 1 until ci > 6 begin # append all columns into one long array and write array in respective column of numbers array
+		loop int ni = 1 until ni > ntrials begin
+			numbers[((ci-1)*ntrials)+ni][blk] = all_input[ni][ci];
+		ni = ni+1;
+		end;
+		ci = ci +1;
+	end; 
+end;
+
+# the real part loading the input files
+input_file expdef_beta1 = new input_file;
+input_file expdef_beta2 = new input_file;
+input_file expdef_beta3 = new input_file;
+input_file expdef_beta4 = new input_file;
+	
+loading_input (1, expdef_beta1);
+loading_input (2, expdef_beta2);
+loading_input (3, expdef_beta3);
+loading_input (4, expdef_beta4);
+
+# load violation files (probably not necessary to rename all variables, but other name was necessary, so to be sure I changed all
+# same procedure just with violations files
+array <string> violations[ntrials*6][4];
+
+int vio_count;
+sub # subroutine
+	loading_vio (int vlk, input_file vub_input_file) 
+begin
+	string vnput = "violations_"+vari+"_"+level_names[vlk]+".txt";
+	vub_input_file.open(vnput);
+	vub_input_file.set_delimiter(9);
+	vio_count = 0;
+	array <string> all_vio[ntrials][6];
+	loop until vub_input_file.end_of_file() || vio_count == ntrials || !vub_input_file.last_succeeded() begin
+		vio_count = vio_count +1;
+		vub_input_file.set_delimiter(9);
+		all_vio[vio_count][1]=vub_input_file.get_string();
+		all_vio[vio_count][2]=vub_input_file.get_string();
+		all_vio[vio_count][3]=vub_input_file.get_string();
+		all_vio[vio_count][4]=vub_input_file.get_string();
+		all_vio[vio_count][5]=vub_input_file.get_string();
+		vub_input_file.set_delimiter(10);
+		all_vio[vio_count][6]=vub_input_file.get_string();
+	end;
+	vub_input_file.close();
+	loop int cv = 1 until cv > 6 begin
+		loop int nv = 1 until nv > ntrials begin
+			violations[((cv-1)*ntrials)+nv][vlk] = all_vio[nv][cv];
+		nv = nv+1;
+		end;
+		cv = cv +1;
+	end; 
+end;
+	
+# real part loading
+input_file vio_beta1 = new input_file;
+input_file vio_beta2 = new input_file;
+input_file vio_beta3 = new input_file;
+input_file vio_beta4 = new input_file;
+	
+loading_vio (1, vio_beta1);
+loading_vio (2, vio_beta2);
+loading_vio (3, vio_beta3);
+loading_vio (4, vio_beta4);
+
+#-----------------------------------------------------------------------------------------------------#	
+
+# loading the block order defined by starting block and 01-50 number for participant
+array <int> block_order [24]; 
+
+#if use_matlab == 0 then # doesn't work with matlab extension so wie use the 01-50 varianat
+	int count_int = 0;
+	array <int> block_order_input [24];
+	input_file block_order_intputfile = new input_file;
+	string inputfile = "M:\\RICHI\\BlockOrderFiles_2\\block_order_"+string(block)+"_"+printf(list,"%02d")+".txt";
+	#string inputfile = "E:\\RICHI\\BlockOrderFiles_2\\block_order_"+string(block)+"_"+printf(list,"%02d")+".txt";
+	block_order_intputfile.open(inputfile);
+	block_order_intputfile.set_delimiter(10);
+	loop until block_order_intputfile.end_of_file() || count_int == block_order.count() || !block_order_intputfile.last_succeeded() begin
+		count_int = count_int +1;
+		block_order_intputfile.set_delimiter(10);
+		block_order_input[count_int]= block_order_intputfile.get_int();
+	end;
+	block_order_intputfile.close();
+	block_order = block_order_input;
+
+#-----------------------------------------------------------------------------------------------
+
+#### START OF EXPERIMENT####
+begin		
+output_file out_file = new output_file;										
+
+out_file.open(printf(vp,"%02d")+"_training_"+string(block)+"_"+printf(list,"%02d")+"_"+date_time("dd.mm.yy_hh.nn.ss")+".txt"); # "only" works till subject = 99
+out_file.print("ID	block	trial_block	trial_cat	trial_total	number	violation	level_violation	onset	duration	Response	Hit_Miss	RT	pre_trial_fixcross_ISI");
+
+Start_trial.present();
+# Instructions müssen (vermutlich) noch bearbeitet werden
+
+loop int k = 1 until k > 4 begin
+	int current_block = block_order[k];
+
+	int pause = isi_durations[k] + noise_50[k]; 
+	
+	#Blinking Fix_crosses
+	trial_number.set_caption("+");
+	trial_number.redraw();
+	fix_event.set_duration(pause-300); fixcross_trial.set_duration(pause); # I feel like the brake after fixcross_trial is longer then in bewteen the others
+	fixcross_trial.present();
+	number_trial.present();
+	stimulus_data fix_trial_data = stimulus_manager.last_stimulus_data();
+	number_trial.present();number_trial.present();
+	fix_clock = clock.time();
+	fix_trial_duration = fix_clock - fix_trial_data.time();
+
+	loop int i = 1 
+		#until i  > 9 begin # for testing only 9 instead of 162 trials per block
+		until i > ntrials begin
+		counter = counter +1;
+		int oldResponses = response_manager.total_response_count();
+		int newResponses = response_manager.total_response_count();
+		caption_old = numbers[i+stpnt][current_block];
+		kind_of_violation = violations[i+stpnt][current_block];
+		if caption_old == "1" then caption_new = "4"; # renaming old captions to new captions
+		elseif caption_old == "2" then caption_new = "5";
+		elseif caption_old == "3" then caption_new = "6";
+		elseif caption_old == "5" then caption_new = "7";
+		elseif caption_old == "6" then caption_new = "8";
+		elseif caption_old == "7" then caption_new = "9";
+		elseif caption_old == "4" then caption_new = violation_number;
+		end; 
+		
+		trial_number.set_caption(caption_new);
+		#trial_number.set_caption(string(k)+" - "+string(stpnt)+" - "+string(current_block)); # for testing
+			
+		if numbers[i+stpnt][current_block] == "4" then # defining violation trials
+			vio_trial = 1;
+		else
+			vio_trial = 0;
+		end;
+		
+		trial_number.redraw();
+		number_trial.present(); # presenting number
+		
+		current_time = clock.time(); 
+		stimulus_data trial_data = stimulus_manager.last_stimulus_data();
+		trial_onset = trial_data.time();
+		if i == 1 then fixcross_duration = pause + fix_trial_duration; else fixcross_duration = 0; end; # 3 * fix_trial_duration ~ 2100
+		
+		Response = 0; # collecting response
+		if (response_manager.response_count() > 0) then 
+			response_data resp = response_manager.get_response_data(newResponses+1);
+			Response = resp.button();
+		end;
+		
+		stimulus_data last = stimulus_manager.last_stimulus_data();
+		RT = string(last.reaction_time()); 
+			
+		if Response != 1 && vio_trial == 0 then # defining outcome of response
+			RT = "NA";
+			hitormiss = "correct_rejection"; 
+		elseif Response != 1 && vio_trial == 1 then
+			RT = "NA";
+			hitormiss = "miss";
+		elseif Response == 1 && vio_trial == 0 then
+			hitormiss = "false_alarm";
+		elseif Response == 1 && vio_trial == 1 then
+			hitormiss = "hit";
+		end;
+			
+			
+		# write in output file
+		out_file.print ("\n"+string(vp)+"	"+block_names[current_block]+"	"+string(i)+"	"+string(i+stpnt)+"	"+string(counter)+"	"+
+							caption_new+"	"+string(vio_trial)+"	"+kind_of_violation+"	"+string(trial_onset)+"	"+string(current_time - trial_onset)+"	"+
+							string(Response)+"	"+hitormiss+"	"+RT+"	"+string(fixcross_duration));
+				
+		i=i+1;
+	end;
+	k=k+1;	
+end;
+#################At end of the experiment######################
+out_file.print ("\n" + "Endtime:" + date_time("dd.mm.yy_hh.nn.ss")); # at the end of output file, wirte down extra money won 
+
+End_trial.present(); # The End!
+end;

@@ -1,0 +1,48 @@
+int ntrials=10000; # number of trials
+int npics=245; # number of pictures
+int ipic; # counter of pictures
+array <string> picname[npics]; # input array
+int Response = 0; 
+
+string textfileEXP = "pics7.txt"; # input file
+input_file expdef = new input_file; 
+expdef.open(textfileEXP);
+
+int count = 0; # load in input file
+	loop until
+	expdef.end_of_file() || count == npics || !expdef.last_succeeded()
+			begin
+			count = count + 1;
+				picname[count]=expdef.get_string();
+			end;
+expdef.close();
+begin
+	
+array <int> turn[npics] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+loop int i=1 until i > ntrials || Response != 0 begin
+	int oldResponses = response_manager.total_response_count();
+	int newResponses = response_manager.total_response_count();
+		
+	ipic=1+mod(i-1, npics);
+	my_bitmap.set_filename(picname[ipic]);
+	my_bitmap.load();
+	
+	if turn[ipic] == 1 then
+		my_bitmap.rotate_90(90);
+	end;
+		
+	pic_trial.present();
+
+	Response = 0; # collecting response
+	if (response_manager.response_count() > 0) then 
+		response_data resp = response_manager.get_response_data(newResponses+1);
+		Response = resp.button();
+	end;
+			
+	i=i+1;
+end;
+
+
+end;
+

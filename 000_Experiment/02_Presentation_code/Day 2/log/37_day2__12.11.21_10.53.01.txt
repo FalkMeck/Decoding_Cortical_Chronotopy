@@ -1,0 +1,4 @@
+first_trigger_at: 0
+trigger nr 1403 at 1402000
+
+trigger nr 1896 at 1895000

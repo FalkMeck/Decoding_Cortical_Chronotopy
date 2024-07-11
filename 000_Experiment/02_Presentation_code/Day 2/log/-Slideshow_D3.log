@@ -1,0 +1,25 @@
+Scenario - Slideshow_D2.sce
+Logfile written - 07/23/2021 12:34:15
+
+Trial	Event Type	Code	Time	TTime	Uncertainty	Duration	Uncertainty	ReqTime	ReqDur	Stim Type	Pair Index
+
+0	Pulse	55	0	0	NA
+1	Pulse	55	20000	19334	NA
+1	Pulse	55	40000	39334	NA
+2	Pulse	55	60000	18667	NA
+2	Pulse	55	80000	38667	NA
+3	Pulse	55	100000	18001	NA
+3	Pulse	55	120000	38001	NA
+4	Pulse	55	140000	17335	NA
+4	Pulse	55	160000	37335	NA
+4	Response	1	161892	39227	1
+5	Pulse	55	180000	17169	NA
+6	Response	1	199172	16175	1
+6	Pulse	55	200000	17003	NA
+6	Pulse	55	220000	37003	NA
+7	Pulse	55	240000	19837	NA
+7	Pulse	55	260000	39837	NA
+7	Pulse	55	280000	59837	NA
+7	Response	1	294372	74208	1
+8	Pulse	55	300000	5505	NA
+8	Response	1	303811	9316	1

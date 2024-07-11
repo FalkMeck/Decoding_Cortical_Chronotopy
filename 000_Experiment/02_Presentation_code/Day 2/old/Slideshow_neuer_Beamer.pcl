@@ -1,0 +1,88 @@
+int ntrials=10000; # number of trials
+int npics=245; # number of pictures
+int ipic; # counter of pictures
+array <string> picname[npics]; # input array
+int Response = 0; 
+int back1 = 40;
+
+int firstpulse_time; 		################
+int npulse; int tpulse; 	################ 
+
+preset int vp; # name of subject, needs to be NEW, old files are not overwritten
+
+### Subroutine Trigger #???
+sub wait_for_pulse ( int pulse_num )								################
+begin																			################
+   loop until pulse_manager.main_pulse_count() > pulse_num	################
+   begin	#?																	################
+   end;	#?																	################
+end;			
+
+string textfileEXP = "pics7.txt"; # input file
+input_file expdef = new input_file; 
+expdef.open(textfileEXP);
+
+int count = 0; # load in input file
+	loop until
+	expdef.end_of_file() || count == npics || !expdef.last_succeeded()
+			begin
+			count = count + 1;
+				picname[count]=expdef.get_string();
+			end;
+expdef.close();
+begin
+	
+output_file out_file = new output_file;										
+
+out_file.open(printf(vp,"%02d")+"_day2_"+"_"+date_time("dd.mm.yy_hh.nn.ss")+".txt"); # "only" works till subject = 99
+
+loop int i=1 until i > ntrials || Response != 0 begin
+	int oldResponses = response_manager.total_response_count();
+	int newResponses = response_manager.total_response_count();
+		
+	ipic=1+mod(i-1, npics);
+	my_bitmap.set_filename(picname[ipic]);
+	my_bitmap.load();
+	pic_trial.present();
+
+	Response = 0; # collecting response
+	if (response_manager.response_count() > 0) then 
+		response_data resp = response_manager.get_response_data(newResponses+1);
+		Response = resp.button();
+	end;
+			
+	i=i+1;
+end;
+
+
+loop int j = 1 until j > 116 begin
+	default.set_background_color(back1, back1, back1); 
+	mt_trial.present();
+	back1 = back1+1;
+	j = j+1; 
+end; 
+
+Start_trial.present();
+
+wait_for_pulse(2);										################
+
+firstpulse_time = pulse_manager.main_pulse_time(1); #Zeitpunkt des ersten Triggers 	################
+out_file.print("first_trigger_at: "+ string(firstpulse_time)+ "\n");						################
+
+npulse = pulse_manager.main_pulse_count();		################
+tpulse = pulse_manager.main_pulse_time(npulse); ################
+out_file.print( "trigger nr " + string(npulse) + " at " + string(tpulse) + "\n" ); ################
+
+
+fixcross_trial.present();
+
+npulse = pulse_manager.main_pulse_count();						################ maybe delete
+tpulse = pulse_manager.main_pulse_time(npulse); 				################
+out_file.print( "\n"+"trigger nr " + string(npulse) + " at " + string(tpulse) + "\n" );	################
+
+End_trial.present();
+
+out_file.close();
+
+end;
+

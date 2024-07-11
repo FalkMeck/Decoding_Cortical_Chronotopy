@@ -1,0 +1,21 @@
+Scenario - RCHS_fMRI.sce
+Logfile written - 07/09/2021 10:05:20
+
+Subject	Pulse	Event Type	Code	Time	TTime	Uncertainty	Duration	Uncertainty	ReqTime	ReqDur	Stim Type	Pair Index
+
+1	1	Pulse	55	0	0	NA
+
+
+{
+   "app": "Presentation Version 20.3 Build 02.25.19",
+   "device": "Micro-Star International Co., Ltd. MS-7B98",
+   "experiment": "{153B309D-6681-4069-879C-5F24FB89C20C}",
+   "os": "Windows 10 64 bit",
+   "package": "",
+   "parameters": {
+      "configuration": "Default configuration"
+   },
+   "scenario": "RCHS_fMRI.sce",
+   "subject": "1",
+   "timestamp": "2021/07/09 08:05:15 GMT"
+}

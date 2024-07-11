@@ -1,0 +1,52 @@
+Scenario - RCHS_fMRI.sce
+Logfile written - 07/09/2021 10:07:22
+
+Subject	Pulse	Event Type	Code	Time	TTime	Uncertainty	Duration	Uncertainty	ReqTime	ReqDur	Stim Type	Pair Index
+
+1	1	Pulse	55	0	0	NA
+1	2	Pulse	55	20000	20000	NA
+1	3	Pulse	55	40000	40000	NA
+1	4	Pulse	55	60000	60000	NA
+1	5	Pulse	55	80000	80000	NA
+1	6	Pulse	55	100000	100000	NA
+1	7	Pulse	55	120000	120000	NA
+1	8	Pulse	55	140000	140000	NA
+1	9	Pulse	55	160000	160000	NA
+1	10	Pulse	55	180000	180000	NA
+1	11	Pulse	55	200000	200000	NA
+1	12	Pulse	55	220000	220000	NA
+1	13	Pulse	55	240000	240000	NA
+1	14	Pulse	55	260000	260000	NA
+1	15	Pulse	55	280000	280000	NA
+1	16	Pulse	55	300000	300000	NA
+1	17	Pulse	55	320000	320000	NA
+1	18	Pulse	55	340000	340000	NA
+1	19	Pulse	55	360000	360000	NA
+1	20	Pulse	55	380000	380000	NA
+1	21	Pulse	55	400000	400000	NA
+1	22	Pulse	55	420000	420000	NA
+1	23	Pulse	55	440000	440000	NA
+1	24	Pulse	55	460000	460000	NA
+1	25	Pulse	55	480000	480000	NA
+1	26	Pulse	55	500000	500000	NA
+1	27	Pulse	55	520000	520000	NA
+1	28	Pulse	55	540000	540000	NA
+1	29	Pulse	55	560000	560000	NA
+1	30	Pulse	55	580000	580000	NA
+1	31	Pulse	55	600000	600000	NA
+1	31	Quit		605476	605476	NA
+
+
+{
+   "app": "Presentation Version 20.3 Build 02.25.19",
+   "device": "Micro-Star International Co., Ltd. MS-7B98",
+   "experiment": "{153B309D-6681-4069-879C-5F24FB89C20C}",
+   "os": "Windows 10 64 bit",
+   "package": "",
+   "parameters": {
+      "configuration": "Default configuration"
+   },
+   "scenario": "RCHS_fMRI.sce",
+   "subject": "1",
+   "timestamp": "2021/07/09 08:06:17 GMT"
+}

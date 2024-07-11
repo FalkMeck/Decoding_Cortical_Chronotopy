@@ -1,0 +1,23 @@
+Scenario - Slideshow_neuer_Beamer.sce
+Logfile written - 07/09/2021 13:36:43
+
+Trial	Event Type	Code	Time	TTime	Uncertainty	Duration	Uncertainty	ReqTime	ReqDur	Stim Type	Pair Index
+
+0	Pulse	55	0	0	NA
+1	Response	1	14128	11961	0
+1	Pulse	55	20000	17834	NA
+1	Pulse	55	40000	37834	NA
+2	Pulse	55	60000	17667	NA
+2	Pulse	55	80000	37667	NA
+3	Pulse	55	100000	17500	NA
+3	Pulse	55	120000	37500	NA
+3	Pulse	55	140000	57500	NA
+3	Pulse	55	160000	77500	NA
+3	Pulse	55	180000	97500	NA
+3	Pulse	55	200000	117500	NA
+3	Response	1	210528	128028	0
+4	Pulse	55	220000	9334	NA
+4	Pulse	55	240000	29334	NA
+4	Response	1	255568	44901	0
+5	Pulse	55	260000	4334	NA
+5	Response	1	264848	9181	0

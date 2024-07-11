@@ -1,0 +1,132 @@
+Scenario - RCHS_fMRI.sce
+Logfile written - 07/09/2021 10:11:08
+
+Subject	Trial	Event Type	Code	Time	TTime	Uncertainty	Duration	Uncertainty	ReqTime	ReqDur	Stim Type	Pair Index
+
+1	0	Pulse	55	0	0	NA
+1	1	Pulse	55	20000	19750	NA
+1	1	Pulse	55	40000	39750	NA
+1	1	Pulse	55	60000	59750	NA
+1	1	Pulse	55	80000	79750	NA
+1	1	Pulse	55	100000	99750	NA
+1	1	Pulse	55	120000	119750	NA
+1	1	Pulse	55	140000	139750	NA
+1	1	Pulse	55	160000	159750	NA
+1	1	Pulse	55	180000	179750	NA
+1	1	Pulse	55	200000	199750	NA
+1	1	Pulse	55	220000	219750	NA
+1	1	Pulse	55	240000	239750	NA
+1	1	Pulse	55	260000	259750	NA
+1	1	Pulse	55	280000	279750	NA
+1	1	Pulse	55	300000	299750	NA
+1	1	Pulse	55	320000	319750	NA
+1	1	Pulse	55	340000	339750	NA
+1	1	Response	1	346663	346413	0
+1	2	Picture	Fix	346781	0	1	64188	1	0	64110	other	0
+1	2	Pulse	55	360000	13219	NA
+1	2	Pulse	55	380000	33219	NA
+1	2	Pulse	55	400000	53219	NA
+1	3	Picture	Num	414053	83	1	4085	1	0	4000	miss	0
+1	3	Pulse	55	420000	6031	NA
+1	4	Picture	Num	421138	83	1	4085	1	0	4000	miss	0
+1	5	Picture	Num	428224	83	1	4085	1	0	4000	miss	0
+1	6	Picture	Num	435310	83	1	4085	1	0	4000	miss	0
+1	6	Pulse	55	440000	4774	NA
+1	7	Picture	Num	442395	83	1	4085	1	0	4000	miss	0
+1	8	Picture	Num	449481	83	1	4085	1	0	4000	miss	0
+1	9	Picture	Num	456567	83	1	4085	1	0	4000	miss	0
+1	9	Pulse	55	460000	3517	NA
+1	10	Picture	Num	463652	88	1	4085	1	0	4000	miss	0
+1	11	Picture	Num	470738	83	1	4085	1	0	4000	miss	0
+1	12	Picture	Num	477824	83	1	4085	1	0	4000	miss	0
+1	12	Pulse	55	480000	2260	NA
+1	13	Picture	Num	484909	83	1	4085	1	0	4000	miss	0
+1	14	Picture	Num	491995	83	1	4085	1	0	4000	miss	0
+1	15	Picture	Num	499081	83	1	4085	1	0	4000	miss	0
+1	15	Pulse	55	500000	1003	NA
+1	16	Picture	Num	506167	83	1	4085	1	0	4000	miss	0
+1	17	Picture	Num	513252	83	1	4085	1	0	4000	miss	0
+1	17	Pulse	55	520000	6831	NA
+1	18	Picture	Num	520338	83	1	4085	1	0	4000	miss	0
+1	19	Picture	Num	527424	83	1	4085	1	0	4000	miss	0
+1	20	Picture	Num	534509	83	1	4085	1	0	4000	miss	0
+1	20	Pulse	55	540000	5574	NA
+1	21	Picture	Num	541595	83	1	4085	1	0	4000	miss	0
+1	22	Picture	Num	548681	83	1	4085	1	0	4000	miss	0
+1	23	Picture	Num	555766	83	1	4085	1	0	4000	miss	0
+1	23	Pulse	55	560000	4317	NA
+1	24	Picture	Num	562852	89	1	4080	6	0	4000	miss	0
+1	25	Picture	Num	569938	83	1	4085	1	0	4000	miss	0
+1	26	Picture	Num	577023	83	1	4085	1	0	4000	miss	0
+1	26	Pulse	55	580000	3060	NA
+1	27	Picture	Num	584109	83	1	4085	1	0	4000	miss	0
+1	28	Picture	Num	591194	89	1	4085	1	0	4000	miss	0
+1	29	Picture	Num	598280	83	1	4085	1	0	4000	miss	0
+1	29	Pulse	55	600000	1803	NA
+1	30	Picture	Num	605366	83	1	4085	1	0	4000	miss	0
+1	31	Picture	Num	612452	83	1	4085	1	0	4000	miss	0
+1	32	Picture	Num	619537	83	1	4085	1	0	4000	miss	0
+1	32	Pulse	55	620000	546	NA
+1	33	Picture	Num	626623	83	1	4085	1	0	4000	miss	0
+1	34	Picture	Num	633709	84	1	4085	1	0	4000	miss	0
+1	34	Pulse	55	640000	6375	NA
+1	35	Picture	Num	640794	83	1	4085	1	0	4000	miss	0
+1	36	Picture	Num	647880	83	1	4085	1	0	4000	miss	0
+1	37	Picture	Num	654966	83	1	4085	1	0	4000	miss	0
+1	37	Pulse	55	660000	5118	NA
+1	38	Picture	Num	662051	83	1	4085	1	0	4000	miss	0
+1	39	Picture	Num	669137	83	1	4085	1	0	4000	miss	0
+1	40	Picture	Num	676223	83	1	4085	1	0	4000	miss	0
+1	40	Pulse	55	680000	3861	NA
+1	41	Picture	Num	683308	83	1	4079	6	0	4000	miss	0
+1	42	Picture	Num	690394	83	1	4085	1	0	4000	miss	0
+1	43	Picture	Num	697480	83	1	4085	1	0	4000	miss	0
+1	43	Pulse	55	700000	2604	NA
+1	44	Picture	Num	704565	83	1	4080	6	0	4000	miss	0
+1	45	Picture	Num	711651	89	1	4080	6	0	4000	miss	0
+1	46	Picture	Num	718736	83	1	4077	9	0	4000	miss	0
+1	46	Pulse	55	720000	1347	NA
+1	47	Picture	Num	725822	83	1	4085	1	0	4000	miss	0
+1	48	Picture	Num	732908	83	1	4085	1	0	4000	miss	0
+1	49	Picture	Num	739994	83	1	4085	1	0	4000	miss	0
+1	49	Pulse	55	740000	90	NA
+1	50	Picture	Num	747079	83	1	4085	1	0	4000	miss	0
+1	51	Picture	Num	754165	83	1	4085	1	0	4000	miss	0
+1	51	Pulse	55	760000	5919	NA
+1	52	Picture	Num	761250	83	1	4085	1	0	4000	miss	0
+1	53	Picture	Num	768336	83	1	4085	1	0	4000	miss	0
+1	54	Picture	Num	775422	83	1	4085	1	0	4000	miss	0
+1	54	Pulse	55	780000	4662	NA
+1	55	Picture	Num	782508	83	1	4085	1	0	4000	miss	0
+1	56	Picture	Num	789593	83	1	4085	1	0	4000	miss	0
+1	57	Picture	Num	796679	83	1	4085	1	0	4000	miss	0
+1	57	Pulse	55	800000	3405	NA
+1	58	Picture	Num	803765	83	1	4085	1	0	4000	miss	0
+1	59	Picture	Num	810850	83	1	4085	1	0	4000	miss	0
+1	60	Picture	Num	817936	83	1	4085	1	0	4000	miss	0
+1	60	Pulse	55	820000	2147	NA
+1	61	Picture	Num	825022	89	1	4085	1	0	4000	miss	0
+1	62	Picture	Num	832107	88	1	4079	6	0	4000	miss	0
+1	63	Picture	Num	839193	83	1	4085	1	0	4000	miss	0
+1	63	Pulse	55	840000	890	NA
+1	64	Picture	Num	846279	89	1	4079	6	0	4000	miss	0
+1	65	Picture	Num	853364	83	1	4085	1	0	4000	miss	0
+1	65	Pulse	55	860000	6719	NA
+1	66	Picture	Num	860450	83	1	4085	1	0	4000	miss	0
+1	67	Picture	Num	867536	83	1	4085	1	0	4000	miss	0
+1	67	Quit		871783	4331	NA
+
+
+{
+   "app": "Presentation Version 20.3 Build 02.25.19",
+   "device": "Micro-Star International Co., Ltd. MS-7B98",
+   "experiment": "{153B309D-6681-4069-879C-5F24FB89C20C}",
+   "os": "Windows 10 64 bit",
+   "package": "",
+   "parameters": {
+      "configuration": "Default configuration"
+   },
+   "scenario": "RCHS_fMRI.sce",
+   "subject": "1",
+   "timestamp": "2021/07/09 08:09:37 GMT"
+}

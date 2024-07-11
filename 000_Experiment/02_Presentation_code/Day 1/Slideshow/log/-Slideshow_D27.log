@@ -1,0 +1,7 @@
+Scenario - Slideshow_D1.sce
+Logfile written - 10/08/2021 07:32:32
+
+Trial	Event Type	Code	Time	TTime	Uncertainty	Duration	Uncertainty	ReqTime	ReqDur	Stim Type	Pair Index
+
+2	Response	1	42731	1467	1
+2	Quit		47691	6427	NA
