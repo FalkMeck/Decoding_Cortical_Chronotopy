@@ -6,14 +6,14 @@ resultsEF = results;
 k = 3;
 n = 219; 
 
-resultsEF(2,[1,3:7,9:18],1) = (results(2,[1,3:7,9:18],1)-k+1)./(n-k);
-resultsEF([1,3:7,9:18],2,1) = (results([1,3:7,9:18],2,1)-k+1)./(n-k);
+resultsEF(2,[1,4:17],1) = (results(2,[1,4:17],1)-k+1)./(n-k);
+resultsEF([1,4:17],2,1) = (results([1,4:17],2,1)-k+1)./(n-k);
 
-resultsEF(8,[1,3:7,9:18],1) = (results(8,[1,3:7,9:18],1)-k+1)./(n-k);
-resultsEF([1,3:7,9:18],8,1) = (results([1,3:7,9:18],8,1)-k+1)./(n-k);
+resultsEF(3,[1,4:17],1) = (results(3,[1,4:17],1)-k+1)./(n-k);
+resultsEF([1,4:17],3,1) = (results([1,4:17],3,1)-k+1)./(n-k);
 
-resultsEF(2,8,1) = sqrt(results(2,8,1)/(n*(k-1)));
-resultsEF(8,2,1) = sqrt(results(2,8,1)/(n*(k-1)));
+resultsEF(2,3,1) = sqrt(results(2,3,1)/(n*(k-1)));
+resultsEF(3,2,1) = sqrt(results(3,2,1)/(n*(k-1)));
 
 save('spinTest_resultsEF.mat', 'resultsEF'); 
 writematrix(resultsEF(:,:,1), 'spintestResults_effectSizes.csv')
