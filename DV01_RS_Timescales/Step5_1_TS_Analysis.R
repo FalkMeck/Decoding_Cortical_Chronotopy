@@ -15,7 +15,7 @@ outDir = paste0(analysis_dir, "_Bayesian_Model_comp_finalZ")
 ifelse(!dir.exists(file.path(outDir)), dir.create(file.path(outDir)), FALSE)
 setwd(outDir)
 
-load(paste0(analysis_dir, "TS_Raut_Data_final_lausanne250_2024_03_06.RData"))
+load(paste0(analysis_dir, "TS_Raut_Data_final_lausanne250_2024_09_05.RData"))
 
 
 

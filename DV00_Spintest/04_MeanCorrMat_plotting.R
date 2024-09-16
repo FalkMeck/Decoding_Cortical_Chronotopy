@@ -4,8 +4,8 @@ setwd("...")
 
 library(corrplot)
 
-varNames = c("Resting-state timescales", "RC", "SFC", "Ji atlas", "|x|-coordinate", "y-coordinate", "z-coordinate",
-             "DC", "Degree centrality", "Betweenness centrality ", "Closeness centrality", 
+varNames = c("Resting-state timescales", "RC", "DC","SFC", "Ji atlas", "|x|-coordinate", "y-coordinate", 
+             "Degree centrality", "Betweenness centrality ", "Closeness centrality", 
              "Participation coefficient", "Within-module degree z-score", "Cortical thickness", 
              "ISC (Single)","ISC (Triplet)", "ISC (Nonet)", "ISC (Complete)")
 

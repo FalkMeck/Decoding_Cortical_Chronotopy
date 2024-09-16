@@ -2,7 +2,7 @@
 
 analysis_dir = ".../"
 setwd(analysis_dir)
-load(paste0("...", "/DV01_RS_Timescales/TS_Raut_Data_final_lausanne250_2024_03_06.RData"))
+load(paste0("...", "/DV01_RS_Timescales/TS_Raut_Data_final_lausanne250_2024_09_05.RData"))
 
 # Timescales raw
 meanTSRaut = tapply(R2data_RCRautFinal$Timescales_Raut,R2data_RCRautFinal$Region, mean)
@@ -57,10 +57,8 @@ data4spinTest$WithinModZ = tapply(R2data_RCRautFinal$WithinMod_DC,R2data_RCRautF
 # Thickness
 data4spinTest$Thickness = tapply(R2data_RCRautFinal$Stats_ThickAvg,R2data_RCRautFinal$Region, mean)
 
-write.csv(x = data4spinTest, file = "data4spinTest.csv")
 
-
-load(paste0("...","/DV02_ISC/iscR2data_Final_2024_03_13.RData"))
+load(paste0("...","/DV02_ISC/iscR2data_Final_2024_09_05.RData"))
 sub_isc = iscR2data_Final[,c(1,3,4,6)]
 wideISC = tidyr::pivot_wider(sub_isc, names_from = "Condition", values_from = "ISC_FishZ")
 ISC_export = aggregate(Single ~ Region, data = wideISC, FUN = mean, na.action = na.omit)
@@ -69,7 +67,9 @@ ISC_export$ISC_FishZ.Nonet = aggregate(Nonet ~ Region, data = wideISC, FUN = mea
 ISC_export$ISC_FishZ.Complete = aggregate(Complete ~ Region, data = wideISC, FUN = mean, na.action = na.omit)$Complete
 names(ISC_export)[2] = "ISC_FishZ.Single"
 
-write.csv(x = ISC_export, file = "ISC.csv")
+data4spinTest = cbind(data4spinTest, ISC_export[,2:5])
+
+write.csv(x = data4spinTest, file = "data4spinTest.csv")
 
 
       

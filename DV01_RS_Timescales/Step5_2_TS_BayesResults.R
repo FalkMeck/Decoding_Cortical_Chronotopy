@@ -8,9 +8,6 @@ library(writexl)
 scico_palette_show()
 
 
-greenRC = c("#b5d378, #86ad38", "#4b601f") # RC: 25% RC, 45% Feeder, 65% Local
-blueishDC = c("#2d4b52", "#518894", "#8cb6c0") # DC: 25% DC, 45% Feeder, 65% Local
-
 analysis_dir = ".../"
 outDir = paste0(analysis_dir, "_Bayesian_Model_comp_final")
 models = intersect(list.files(outDir, pattern = ".RData"), list.files(outDir, pattern = "^TS"))
@@ -22,7 +19,7 @@ modelResExplore = c("TSRaut_GM",
  "TSRaut_GMDeg","TSRaut_GMBtw","TSRaut_GMCls","TSRaut_GMPtC","TSRaut_GMWMz",
  "TSRaut_SBMt")
 
-load(paste0(analysis_dir, "TS_Raut_Data_final_lausanne250_2024_03_06.RData"))
+load(paste0(analysis_dir, "TS_Raut_Data_final_lausanne250_2024_09_05.RData"))
 
 # RESULTS ####
 # RC ####
@@ -34,16 +31,6 @@ h <- c("RC_Class_SingRC_Feeder > 0",
        "RC_Class_SingRC_Club - RC_Class_SingRC_Feeder > 0")
 hRC = brms::hypothesis(model, h)
 write_xlsx(hRC$hypothesis, path = paste0(outDir, "/TSRaut_RC/TSRaut_RC_h.xlsx"))
- 
-# XYZ ####
-lazyLoad("TSRaut_aXxY")
-model = brmodel_TSRaut_aXxY
-summary(model)
-h <- c( "z_absCoord_x <  0",
-         "z_Coord_y > 0",
-        "z_absCoord_x:z_Coord_y < 0")
-hXY = brms::hypothesis(model, h)
-write_xlsx(hXY$hypothesis, path = paste0(outDir, "/TSRaut_aXxY/TSRaut_aXxY_h.xlsx"))
 
 # DC ####
 lazyLoad("TSRaut_DC")
@@ -51,8 +38,8 @@ model = brmodel_TSRaut_DC
 summary(brmodel_TSRaut_DC)
 
 h <- c("DC_Class_SingDC_Feeder > 0",
-        "DC_Class_SingDC_Club  > 0",
-        "DC_Class_SingDC_Club - DC_Class_SingDC_Feeder > 0")
+       "DC_Class_SingDC_Club  > 0",
+       "DC_Class_SingDC_Club - DC_Class_SingDC_Feeder > 0")
 hDC  = brms::hypothesis(model, h)
 write_xlsx(hDC$hypothesis, path = paste0(outDir, "/TSRaut_DC/TSRaut_DC_h.xlsx"))
 
@@ -72,6 +59,16 @@ summary(model)
 h <- c( "z_SFC_S7_Multi_seed > 0")
 hSFC = brms::hypothesis(model, h)
 write_xlsx(hSFC$hypothesis,  path = paste0(outDir, "/TSRaut_SFCindi/TSRaut_SFCindi_h.xlsx"))
+ 
+# XYZ ####
+lazyLoad("TSRaut_aXxY")
+model = brmodel_TSRaut_aXxY
+summary(model)
+h <- c( "z_absCoord_x <  0",
+         "z_Coord_y > 0",
+        "z_absCoord_x:z_Coord_y < 0")
+hXY = brms::hypothesis(model, h)
+write_xlsx(hXY$hypothesis, path = paste0(outDir, "/TSRaut_aXxY/TSRaut_aXxY_h.xlsx"))
 
 
 # Graphmeasures all ####

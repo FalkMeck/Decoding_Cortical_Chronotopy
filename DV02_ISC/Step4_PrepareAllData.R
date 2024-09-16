@@ -222,3 +222,64 @@ load(paste0(iscDir, "iscR2data_",templates[t],curDate,".RData"))
   
 
 }
+
+# libraries
+library(plot3D)
+library(ggplot2)
+library(lattice)
+library(ggpubr)
+library(moments)
+
+setwd(".../DV02_ISC/")
+
+template = 'lausanne250'
+curDate = format(Sys.time(), "_%Y_%m_%d")
+#curDate = "_2024_03_13"
+load(paste0(getwd(), "/iscR2data_scaled_",template,curDate,".RData"))
+
+iscR2data_scaled$Condition = factor(iscR2data_scaled$Condition, levels = c("Single", "Triplet", "Nonet", "Complete"))
+iscR2data_scaled$z_NumVox = as.numeric(scale(iscR2data_scaled$NumVox))
+
+ggplot(iscR2data_scaled, aes(x = ISC_FishZ)) +
+  geom_histogram(fill = "white", colour = "black", bins = 100) +
+  facet_grid(Condition ~ .)
+
+moments::skewness(iscR2data_scaled$ISC_FishZ)
+moments::kurtosis(iscR2data_scaled$ISC_FishZ)
+moments::jarque.test(iscR2data_scaled$ISC_FishZ)
+# significant, not NV
+outliers::outlier(iscR2data_scaled$ISC_FishZ)
+
+qqnorm(iscR2data_scaled$ISC_FishZ)
+
+# check fro other distribtions and maybe glmer
+fitdistrplus::descdist(iscR2data_scaled$ISC_FishZ, boot = 100L)
+rcompanion::plotNormalHistogram(iscR2data_scaled$ISC_FishZ, breaks = 100)
+
+
+# Kurtosis is to large, outliers!
+boxISC = boxplot(iscR2data_scaled$ISC_FishZ)
+iscR2data_Final = iscR2data_scaled[!(iscR2data_scaled$ISC_FishZ > (boxISC$stats[4] + 1.5*IQR(iscR2data_scaled$ISC_FishZ)) | 
+                                       iscR2data_scaled$ISC_FishZ < (boxISC$stats[2] - 1.5*IQR(iscR2data_scaled$ISC_FishZ))),]
+table(iscR2data_Final$Subject)/876
+rcompanion::plotNormalHistogram(iscR2data_Final$ISC_FishZ, breaks = 100)
+fitdistrplus::descdist(iscR2data_Final$ISC_FishZ, boot = 100L)
+
+ggdensity(iscR2data_Final, x = "ISC_FishZ", fill = "Subject", title = "ISC_FishZ") +
+  scale_x_continuous(limits = c(-0.2, 1.6)) +
+  stat_overlay_normal_density(color = "red", linetype = "dashed")
+
+table(iscR2data_Final$Subject, iscR2data_Final$Condition)/219
+
+## 
+hist(iscR2data_Final$ISC_FishZ, breaks = 100)
+boxplot(iscR2data_Final$ISC_FishZ)
+
+moments::skewness(iscR2data_Final$ISC_FishZ) # 0.2343574
+moments::kurtosis(iscR2data_Final$ISC_FishZ) #2.899748
+moments::jarque.test(iscR2data_Final$ISC_FishZ)
+# Hair et al. (2010) and Bryne (2010) argued that data is considered to be normal if skewness is between ‐2 to +2 and kurtosis is between ‐7 to +7.
+
+iscR2data_Final$Beamer[is.na(iscR2data_Final$Beamer)] = "old"
+save('iscR2data_Final', file = paste0(getwd(), "/iscR2data_Final", curDate , ".RData"))
+load(paste0(getwd(), "/iscR2data_Final", curDate , ".RData"))

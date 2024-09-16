@@ -165,6 +165,113 @@ for (t in 1:length(templates)) {
 }
 
 
+# Libraries
+library(tidyverse)
+library(tidybayes)
+library(brms)
+library(bayesplot)
+library(bayestestR)
+library(ggplot2)
+library(RcppEigen)
+library(plot3D)
+
+### Data
+analysis_dir = ".../DV01_RS_Timescales/"
+outDir = paste0(analysis_dir, "_Bayesian_Model_comp_finalZ")
+ifelse(!dir.exists(file.path(outDir)), dir.create(file.path(outDir)), FALSE)
+setwd(outDir)
+
+# Data and preparation ####
+curDate = format(Sys.time(), "_%Y_%m_%d")
+# curDate = "_2024_02_01"
+load(paste0(analysis_dir, "R2data_lausanne250",curDate,".RData"))
+
+# convert Volume to liter
+R2data$ICV_l = R2data$ICV/100^3
+
+# Plotting
+## X and Y
+scatter3D(R2data$Coord_x, R2data$Coord_y, R2data$Timescales_Ito)
+scatter3D(R2data$Coord_x, R2data$Coord_y, R2data$Timescales_Raut)
+
+R2data$absCoord_x = abs(R2data$Coord_x)
+R2data$absCoord_y = abs(R2data$Coord_y)
+
+scatter3D(R2data$absCoord_x, R2data$absCoord_y, R2data$Timescales_Raut)
+
+## Graph theoretical Measures
+### Degree
+plot(R2data$Degree, R2data$Timescales_Ito)
+plot(R2data$Degree, R2data$Timescales_Raut)
+### Closeness centrality
+plot(R2data$Closeness, R2data$Timescales_Ito)
+plot(R2data$Closeness, R2data$Timescales_Raut)
+### Betweenness centrality
+plot(R2data$Betweenness, R2data$Timescales_Ito)
+plot(R2data$Betweenness, R2data$Timescales_Raut)
+### Participation Coeficient (individual)
+plot(R2data$PartCoef_DC, R2data$Timescales_Ito)
+plot(R2data$PartCoef_DC, R2data$Timescales_Raut)
+### Within module degree z-score (individual)
+plot(R2data$WithinMod_DC, R2data$Timescales_Ito)
+plot(R2data$WithinMod_DC, R2data$Timescales_Raut)
+
+## Surface and Thickness (controlled for ICV)
+plot(R2data$Stats_SurfArea/R2data$ICV_l, R2data$Timescales_Ito)
+plot(R2data$Stats_ThickAvg/R2data$ICV_l, R2data$Timescales_Ito)
+plot(R2data$Stats_SurfArea/R2data$ICV_l, R2data$Timescales_Raut)
+plot(R2data$Stats_ThickAvg/R2data$ICV_l, R2data$Timescales_Raut)
+
+## Age
+plot(R2data$Age, R2data$Timescales_Ito)
+plot(R2data$Age, R2data$Timescales_Raut)
+
+# Scale continous variables 
+R2data_scaled = R2data
+nums = unlist(lapply(R2data, is.numeric), use.names = FALSE)  
+toScale = (c(12:length(R2data))[nums[12:length(R2data)]])
+R2data_scaled = cbind(R2data_scaled, data.frame(matrix(NA,nrow = length(R2data_scaled$Subject), ncol = length(toScale))))
+names(R2data_scaled)[(length(R2data)+1):length(R2data_scaled)] = paste0("z_",names(R2data[toScale]))
+R2data_scaled[(length(R2data)+1):length(R2data_scaled)] = as.data.frame(lapply(R2data_scaled[,toScale], scale))
+
+R2data_scaled$Stats_Surf = R2data_scaled$Stats_SurfArea/R2data_scaled$ICV
+R2data_scaled$Stats_Thick = R2data_scaled$Stats_ThickAvg/R2data_scaled$ICV
+
+R2data_scaled$z_Stats_Surf = as.numeric(scale(R2data_scaled$Stats_Surf))
+R2data_scaled$z_Stats_Thick = as.numeric(scale(R2data_scaled$Stats_Thick))
+
+R2data_scaled$z_logTS_Raut = as.numeric(scale(log(R2data_scaled$Timescales_Raut)))
+R2data_scaled$z_logTS_Ito = as.numeric(scale(log(R2data_scaled$Timescales_Ito)))
+
+R2data_scaledRC = R2data_scaled[!is.na(R2data_scaled$RC_Class_Sing),]
+
+
+# skewness and Kurtosis
+moments::skewness(R2data_scaledRC$Timescales_Raut)
+moments::kurtosis(R2data_scaledRC$Timescales_Raut)
+moments::jarque.test(R2data_scaledRC$Timescales_Raut)
+# significant, not NV
+outliers::outlier(R2data_scaledRC$Timescales_Raut)
+
+qqnorm(R2data_scaledRC$Timescales_Raut)
+
+# check fro other distribtions and maybe glmer
+fitdistrplus::descdist(R2data_scaledRC$Timescales_Raut, boot = 100L)
+# Kurtosis is to large, outliers?
+boxRaut = boxplot(R2data_scaledRC$Timescales_Raut)
+
+R2data_RCRautFinal = R2data_scaledRC[!(R2data_scaledRC$Timescales_Raut > (boxRaut$stats[4] + 1.5*IQR(R2data_scaledRC$Timescales_Raut)) | 
+                                         R2data_scaledRC$Timescales_Raut < (boxRaut$stats[2] - 1.5*IQR(R2data_scaledRC$Timescales_Raut))),]
+
+rcompanion::plotNormalHistogram(R2data_RCRautFinal$z_logTS_Raut, breaks = 100)
+
+## Get Hemisphere information
+R2data_RCRautFinal$Hemi = "R"
+R2data_RCRautFinal$Hemi[grepl("-lh-", R2data_RCRautFinal$Region,fixed = TRUE)] = "L"
+R2data_RCRautFinal$Hemi = factor(R2data_RCRautFinal$Hemi, levels = c("L", "R"))
+
+curDate = format(Sys.time(), "_%Y_%m_%d")
+save(R2data_RCRautFinal, file = paste0(analysis_dir, "TS_Raut_Data_final_lausanne250", curDate, ".RData"))
 
 
 

@@ -17,7 +17,7 @@ models = intersect(list.files(outDir, pattern = ".RData"), list.files(outDir, pa
 modelNames = sapply(strsplit(models, ".", fixed = TRUE), "[[",1)
 setwd(outDir)
 
-load(paste0(analysis_dir, "TS_Raut_Data_final_lausanne250_2024_03_06.RData"))
+load(paste0(analysis_dir, "TS_Raut_Data_final_lausanne250_2024_09_05.RData"))
 
 # RESULTS ####
 # RC ####
@@ -62,14 +62,90 @@ RCplot_paper = RCplot + theme(legend.position = "none") +
 
 ggsave(paste0("RCplot_","PaperPlot.png"), plot = RCplot_paper,
        path = ".../Results_TS", 
-       width = 79.6*2, height = 50*2, units = "mm", dpi = 300)
+       width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
+
+# DC ####
+lazyLoad("TSRaut_DC")
+model = brmodel_TSRaut_DC
+summary(brmodel_TSRaut_DC)
+
+draws = as_draws_df(model, variable = "^b_", regex = TRUE)
+# 30000 = 10 chains * 3000 (4000 - 1000 Warm up)
+drawDC = data.frame(matrix(NA, length(draws$b_Intercept)), 0)
+drawDC$Local = draws$b_Intercept
+drawDC$Feeder = draws$b_Intercept + draws$b_DC_Class_SingDC_Feeder
+drawDC$DC = draws$b_Intercept + draws$b_DC_Class_SingDC_Club
+drawDC = drawDC[,3:length(drawDC)]
+
+drawLong = pivot_longer(drawDC, col = names(drawDC))
+names(drawLong) = c("DC_Class", "z_logTSRaut")
+
+drawLong$DC_Class = factor(drawLong$DC_Class, levels = c("Local", "Feeder", "DC"), 
+                           labels = c("Local node", "Feeder node", "DC hub"))
+
+#404788
+colDC = c("#212445","#49529c","#979cce")
+colsDC = c("Local node" ="#212445" , "Feeder node" = "#49529c", "DC hub" = "#979cce")
+
+DCplot= ggplot(drawLong, aes(y = z_logTSRaut, x = DC_Class, fill = DC_Class)) +
+  stat_eye(position = "dodge",
+           aes(fill_ramp = after_stat(level)), .width = c(0.05, 0.5, 0.95)) +
+  theme_bw() +   theme(legend.position = "none") + guides(fill = "none") + 
+  labs(x = "Diverse Club classification",
+       y = "Resting-state timescale estimate  \n (logarithmized & z-standardized)",
+       title = " ")+ 
+  theme_bw() + scale_fill_manual(name = "", values = colsDC)
+DCplot
+save(DCplot, drawLong, model, colDC, colsDC, file = paste0(outDir, "/TSRaut_DC/Plot_TSRaut_DC.RData"))
+
+
+DCplot_paper = DCplot + theme(legend.position = "none") +
+  theme(axis.text=element_text(size=11,  family="Calibri", color = "black")) +
+  theme(text=element_text(size=11,  family="Calibri", color = "black")) 
+
+ggsave(paste0("DCPlot_","PaperPlot_20240610.png"), plot = DCplot_paper,
+       path = ".../Results_TS", 
+       width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
+
+# Multi Plot #####
+load( paste0(outDir, "/TSRaut_SFCindi/Plot_TSRaut_MULTplot.RData"))
+
+colMulti = c("#1c5863", "#38afc7")
+colsMulti = c("Step-wise functional connectivity"="#1c5863","Ji atlas"="#38afc7")
+
+
+MULTplot = ggplot () + 
+  geom_point(data = brmodel_TSRaut_SFCindi$data, aes(z_SFC_S7_Multi_seed, z_logTS_Raut),
+             alpha = .2, color = colMulti[1], size = .5) +
+  geom_point(data = brmodel_TSRaut_JiItoPerc$data, aes(z_Ji_Ito_multi_perc, z_logTS_Raut),
+             alpha = .2, color = colMulti[2], size = .5) +
+  geom_ribbon(data = dataSFC, aes(x = SFC, y = estimate, ymin = lwr, ymax = upr), alpha = .3, fill = colMulti[1]) +
+  geom_line(data = dataSFC, aes(SFC, estimate, color = "Step-wise functional connectivity"), size = 1) +
+  geom_ribbon(data = dataJiIto, aes(x = JiIto, y = estimate, ymin = lwr, ymax = upr), alpha = .3,fill = colMulti[2]) +
+  geom_line(data = dataJiIto, aes(JiIto, estimate, color = "Ji atlas"), size = 1) +
+  labs(x = "Multimodality (z-standardized)",
+       y = "Resting-state timescale estimate  \n (logarithmized & z-standardized)",
+       title = " ") +
+  theme_bw() + scale_color_manual(name = "", values = colsMulti, breaks = labels(colsMulti))
+MULTplot
+save(MULTplot, colMulti, colsMulti, brmodel_TSRaut_JiItoPerc, brmodel_TSRaut_SFCindi, dataJiIto, dataSFC,
+     file = paste0(outDir, "/TSRaut_SFCindi/Plot_TSRaut_MULTplot.RData"))
+rm(brmodel_TSRaut_SFCindi,brmodel_TSRaut_JiItoPerc)
+
+
+MULTplot_paper = MULTplot + theme(legend.position = c (0.8,0.15)) +
+  theme(axis.text=element_text(size=11,  family="Calibri", color = "black")) +
+  theme(text=element_text(size=11,  family="Calibri", color = "black")) 
+
+ggsave(paste0("MultiPlot_","PaperPlot.png"), plot = MULTplot_paper,
+       path = "...Graphics/Results_TS/", 
+       width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
 
 # XY ####
 load(paste0(outDir, "/TSRaut_aXxY/Plot_TSRaut_aXxY.RData"))
 
-#287D8E
-colXY = c("#1c5863", "#38afc7")
-colsXY = c("|x|"="#1c5863","y"="#38afc7")
+colXY = c("#13533c", "#5ad8ac")
+colsXY = c("|x|"="#13533c","y"="#5ad8ac")
 
 XYplot <- ggplot() +
   # X
@@ -100,84 +176,7 @@ XYplot_paper = XYplot + theme(legend.position = c (0.93,0.2)) +
 
 ggsave(paste0("XYPlot_","PaperPlot.png"), plot = XYplot_paper,
        path = ".../Results_TS", 
-       width = 79.6*2, height = 50*2, units = "mm", dpi = 300)
-
-# DC ####
-lazyLoad("TSRaut_DC")
-model = brmodel_TSRaut_DC
-summary(brmodel_TSRaut_DC)
-
-draws = as_draws_df(model, variable = "^b_", regex = TRUE)
-# 30000 = 10 chains * 3000 (4000 - 1000 Warm up)
-drawDC = data.frame(matrix(NA, length(draws$b_Intercept)), 0)
-drawDC$Local = draws$b_Intercept
-drawDC$Feeder = draws$b_Intercept + draws$b_DC_Class_SingDC_Feeder
-drawDC$DC = draws$b_Intercept + draws$b_DC_Class_SingDC_Club
-drawDC = drawDC[,3:length(drawDC)]
-
-drawLong = pivot_longer(drawDC, col = names(drawDC))
-names(drawLong) = c("DC_Class", "z_logTSRaut")
-
-drawLong$DC_Class = factor(drawLong$DC_Class, levels = c("Local", "Feeder", "DC"), 
-                           labels = c("Local node", "Feeder node", "DC hub"))
-
-# #29af7f
-colDC = c("#13533c","#27a579","#5ad8ac")
-colsDC = c("Local node" ="#13533c" , "Feeder node" = "#27a579", "DC hub" = "#5ad8ac")
-DCplot= ggplot(drawLong, aes(y = z_logTSRaut, x = DC_Class, fill = DC_Class)) +
- stat_eye(position = "dodge",
-         aes(fill_ramp = after_stat(level)), .width = c(0.05, 0.5, 0.95)) +
-  theme_bw() +   theme(legend.position = "none") + guides(fill = "none") + 
-  labs(x = "Diverse Club classification",
-       y = "Resting-state timescale estimate  \n (logarithmized & z-standardized)",
-       title = " ")+ 
-  theme_bw() + scale_fill_manual(name = "", values = colsDC)
-DCplot
-save(DCplot, drawLong, model, colDC, colsDC, file = paste0(outDir, "/TSRaut_DC/Plot_TSRaut_DC.RData"))
-
-
-DCplot_paper = DCplot + theme(legend.position = "none") +
-  theme(axis.text=element_text(size=11,  family="Calibri", color = "black")) +
-  theme(text=element_text(size=11,  family="Calibri", color = "black")) 
-
-ggsave(paste0("DCPlot_","PaperPlot_20240610.png"), plot = DCplot_paper,
-       path = ".../Results_TS", 
-       width = 79.6*2, height = 50*2, units = "mm", dpi = 300)
-
-# Multi Plot #####
-# #404788
-load( paste0(outDir, "/TSRaut_SFCindi/Plot_TSRaut_MULTplot.RData"))
-colMulti = c("#313668","#868cc6")
-colsMulti = c("Step-wise functional connectivity"="#313668","Ji atlas"="#868cc6")
-
-
-MULTplot = ggplot () + 
-   geom_point(data = brmodel_TSRaut_SFCindi$data, aes(z_SFC_S7_Multi_seed, z_logTS_Raut),
-             alpha = .2, color = colMulti[1], size = .5) +
-  geom_point(data = brmodel_TSRaut_JiItoPerc$data, aes(z_Ji_Ito_multi_perc, z_logTS_Raut),
-             alpha = .2, color = colMulti[2], size = .5) +
-  geom_ribbon(data = dataSFC, aes(x = SFC, y = estimate, ymin = lwr, ymax = upr), alpha = .3, fill = colMulti[1]) +
-  geom_line(data = dataSFC, aes(SFC, estimate, color = "Step-wise functional connectivity"), size = 1) +
-  geom_ribbon(data = dataJiIto, aes(x = JiIto, y = estimate, ymin = lwr, ymax = upr), alpha = .3,fill = colMulti[2]) +
-  geom_line(data = dataJiIto, aes(JiIto, estimate, color = "Ji atlas"), size = 1) +
-  labs(x = "Multimodality (z-standardized)",
-       y = "Resting-state timescale estimate  \n (logarithmized & z-standardized)",
-       title = " ") +
-  theme_bw() + scale_color_manual(name = "", values = colsMulti, breaks = labels(colsMulti))
-MULTplot
-save(MULTplot, colMulti, colsMulti, brmodel_TSRaut_JiItoPerc, brmodel_TSRaut_SFCindi, dataJiIto, dataSFC,
-     file = paste0(outDir, "/TSRaut_SFCindi/Plot_TSRaut_MULTplot.RData"))
-rm(brmodel_TSRaut_SFCindi,brmodel_TSRaut_JiItoPerc)
-
-
-MULTplot_paper = MULTplot + theme(legend.position = c (0.8,0.15)) +
-  theme(axis.text=element_text(size=11,  family="Calibri", color = "black")) +
-  theme(text=element_text(size=11,  family="Calibri", color = "black")) 
- 
-ggsave(paste0("MultiPlot_","PaperPlot.png"), plot = MULTplot_paper,
-       path = "...Graphics/Results_TS/", 
-       width = 79.6*2, height = 50*2, units = "mm", dpi = 300)
-
+       width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
 
 
 # Graphmeasures all ####
@@ -238,7 +237,7 @@ GMplot_paper = GMplot + theme(legend.position = c(0.8,0.25)) +
 
 ggsave(paste0("GMPlot_","PaperPlot.png"), plot = GMplot_paper,
        path = ".../Results_TS", 
-       width = 79.6*2, height = 50*2, units = "mm", dpi = 300)
+       width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
 
 # Surface based morphometry thickness ####
 load(paste0(outDir, "/TSRaut_SBMt/Plot_TSRaut_SBMt.RData"))
@@ -268,7 +267,7 @@ SBMt_plot_paper = SBMt_plot + theme(legend.position = c (0.85,0.1)) +
 
 ggsave(paste0("SBMt_plot_","PaperPlot.png"), plot = SBMt_plot_paper,
        path =".../Results_TS", 
-       width = 79.6*2, height = 50*2, units = "mm", dpi = 300)
+       width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
 
 rm(brmodel_TSRaut_SBMt)
 

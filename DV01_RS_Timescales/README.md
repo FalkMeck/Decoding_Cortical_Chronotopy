@@ -16,7 +16,7 @@ This folder contains all the code to get from the resting-state fMRI nifti files
 - *Step3_spectral_template.m*: based on the model free calcualtion of the timescales by the autocorrealtion function in Raut et al. (2020) also requires the shared code by Ryan Raut (https://github.com/ryraut/lag-code). Uses the extracted timeseries to determine timescales by the precise abscissa of the autocorrelation function at half its height.
 - Step4_CombineAllData.R: takes all the data from the organizational schemes and the resting-state timescales of each participant and parcel and combines them into one data set for Analysis.
 (requires all the info about participants, so the final dataset will be shared but not the particpant information)
-- *R2data_lasuanne250_2024_03_06.RData*: R dataset that was used for the analysis (Step5_1 - Step5_3)
+- *R2data_lasuanne250_2024_09_05.RData*: R dataset that was used for the analysis (Step5_1 - Step5_3)
 - *Step5_1_TS_analysis.R*: Loads the final data (outlier extrated, z-scaling and logarithmic transforamtion of timescales). Than calculates the models for all organizational schemes, checks their assumptions and does the model comparision.
 *Step5_2_TS_BayesResults.R*: On Basis of the estimated models, calculates and saves all the results of the hypothesis test within each model
 - *Step5_3_TS_Plots.R*: Creates and saves all the result plots depicted in the paper.

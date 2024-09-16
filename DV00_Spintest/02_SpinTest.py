@@ -31,23 +31,31 @@ order = order-1 # make it python indeces
 
 parcels = order.shape[0]
 
-data4spinTestOrder = data4spinTestNP[order,] # reorder data
+dataAllCont = data4spinTestNP[order,] # reorder data
 
-isc = pd.read_csv(studyDir + 'ISC.csv')   
-varNamesISC = isc.columns[1:]
-iscNP = isc.to_numpy()
-iscOrder = iscNP[order,]
-
-dataAllCont = np.column_stack((data4spinTestOrder,iscOrder[:,2:]))
-varNamesAll = np.append(np.array(varNames), np.array(varNamesISC[1:]))
-
-possibleCols = [2,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21]
-numCols = len(possibleCols)
+if not os.path.exists(studyDir + '_Nulls'):
+    os.mkdir(studyDir + '_Nulls')
+    
+possibleCols = [2,4,6,7,8,9,10,12,13,14,15,16,17,18,19,20,21]
 
 dataAllCont[:,4] = np.where(dataAllCont[:,4] == "RC_Club", 3, 
                    np.where(dataAllCont[:,4] == "RC_Feeder", 2,1))
-dataAllCont[:,11] = np.where(dataAllCont[:,11] == "DC_Club", 3, 
-                   np.where(dataAllCont[:,11] == "DC_Feeder", 2,1))
+dataAllCont[:,6] = np.where(dataAllCont[:,6] == "DC_Club", 3, 
+                   np.where(dataAllCont[:,6] == "DC_Feeder", 2,1))
+
+lausanne250 = nntdata.fetch_cammoun2012(version='fslr32k')['scale125']
+
+for iVar in possibleCols: #possibleCols: 
+    variable = varNamesAll[iVar-1]
+    rotated = nulls.alexander_bloch(pd.to_numeric(dataAllCont[:,iVar]), atlas='fsLR', density='32k', parcellation=lausanne250, n_perm=permutations, seed=420)
+    outputFileName = studyDir + '_Nulls/' + 'Mean_' + variable +'_rotated.h5'
+    h5f = h5py.File(outputFileName, 'w')
+    h5f.create_dataset('dataset_1', data=rotated)
+    h5f.close()
+    print('DONE: ' + variable)
+    time.sleep(1)
+    
+numCols = len(possibleCols)
 
 correlation_results = np.ones((numCols,numCols,2))
 mi = 0
@@ -62,7 +70,7 @@ for i in possibleCols:
     for j in possibleCols:
         if not i == j:
             
-            if (i == 4 or i == 11) and not (j == 4 or j == 11): # if first variable is either RC or DC
+            if (i == 4 or i == 6) and not (j == 4 or j == 6): # if first variable is either RC or DC
                 Group1 = dataAllCont[dataAllCont[:,i] == 1,j]
                 Group2 = dataAllCont[dataAllCont[:,i] == 2,j]
                 Group3 = dataAllCont[dataAllCont[:,i] == 3,j]
@@ -77,7 +85,7 @@ for i in possibleCols:
                 KWboot = KW_results[:,0] >= correlation_results[mi,mj,0]
                 correlation_results[mi,mj,1] = KWboot.sum()/permutations
            
-            if (j == 4 or j == 11) and not (i == 4 or i == 11):  # if second variable is either RC or DC
+            if (j == 4 or j == 6) and not (i == 4 or i == 6):  # if second variable is either RC or DC
                 Group1 = dataAllCont[dataAllCont[:,j] == 1,i]
                 Group2 = dataAllCont[dataAllCont[:,j] == 2,i]
                 Group3 = dataAllCont[dataAllCont[:,j] == 3,i]
@@ -91,11 +99,11 @@ for i in possibleCols:
                 KWboot = KW_results[:,0] >= correlation_results[mi,mj,0]
                 correlation_results[mi,mj,1] = KWboot.sum()/permutations
             
-            if not (i == 4 or i == 11) and not (j == 4 or j == 11):  # if the variable is neither RC nor DC
+            if not (i == 4 or i == 6) and not (j == 4 or j == 6):  # if the variable is neither RC nor DC
                 correlation_results[mi,mj,0], correlation_results[mi,mj,1] = nmStats.compare_images(pd.to_numeric(dataAllCont[:,i]),
                                                                                           pd.to_numeric(dataAllCont[:,j]), nulls=rotated)
             
-            if (i == 4 or i == 11) and (j == 4 or j == 11):  # if both variables are either RC or DC
+            if (i == 4 or i == 6) and (j == 4 or j == 6):  # if both variables are either RC or DC
                 ctTabTrue = pd.crosstab(dataAllCont[:,i], dataAllCont[:,j])
                 correlation_results[mi,mj,0] =  stats.chi2_contingency(ctTabTrue)[0]
                 Chi_results = np.zeros((permutations,1))
