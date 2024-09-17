@@ -157,7 +157,7 @@ names(dataMULT) = c("id", "Condition", "SFC", "JI",
                     "estimate_JI", "lwr_JI", "upr_JI")
 
 colMulti = c("#1c5863", "#38afc7")
-colsMulti = c("Step-wise functional connectivity"="#1c5863","Ji atlas"="#38afc7")
+colsMulti = c("Stepwise functional connectivity"="#1c5863","Ji atlas"="#38afc7")
 
 MULTplot <- ggplot() +
   # SFC
@@ -168,7 +168,7 @@ MULTplot <- ggplot() +
              alpha = .2, color = colMulti[2], size = .05) +
   # SFC
   geom_ribbon(data = dataMULT, aes(x = SFC, y = estimate_SFC, ymin = lwr_SFC, ymax = upr_SFC), alpha = .3, fill = colMulti[1]) +
-  geom_line(data = dataMULT, aes(SFC, estimate_SFC, color =  "Step-wise functional connectivity"), size = .5) +
+  geom_line(data = dataMULT, aes(SFC, estimate_SFC, color =  "Stepwise functional connectivity"), size = .5) +
   # Ji atlas
   geom_ribbon(data = dataMULT, aes(x = JI, y = estimate_JI, ymin = lwr_JI, ymax = upr_JI), alpha = .3, fill = colMulti[2]) +
   geom_line(data = dataMULT, aes(JI, estimate_JI, color =  "Ji atlas"), size = .5) +

@@ -111,7 +111,7 @@ ggsave(paste0("DCPlot_","PaperPlot_20240610.png"), plot = DCplot_paper,
 load( paste0(outDir, "/TSRaut_SFCindi/Plot_TSRaut_MULTplot.RData"))
 
 colMulti = c("#1c5863", "#38afc7")
-colsMulti = c("Step-wise functional connectivity"="#1c5863","Ji atlas"="#38afc7")
+colsMulti = c("Stepwise functional connectivity"="#1c5863","Ji atlas"="#38afc7")
 
 
 MULTplot = ggplot () + 
@@ -120,7 +120,7 @@ MULTplot = ggplot () +
   geom_point(data = brmodel_TSRaut_JiItoPerc$data, aes(z_Ji_Ito_multi_perc, z_logTS_Raut),
              alpha = .2, color = colMulti[2], size = .5) +
   geom_ribbon(data = dataSFC, aes(x = SFC, y = estimate, ymin = lwr, ymax = upr), alpha = .3, fill = colMulti[1]) +
-  geom_line(data = dataSFC, aes(SFC, estimate, color = "Step-wise functional connectivity"), size = 1) +
+  geom_line(data = dataSFC, aes(SFC, estimate, color = "Stepwise functional connectivity"), size = 1) +
   geom_ribbon(data = dataJiIto, aes(x = JiIto, y = estimate, ymin = lwr, ymax = upr), alpha = .3,fill = colMulti[2]) +
   geom_line(data = dataJiIto, aes(JiIto, estimate, color = "Ji atlas"), size = 1) +
   labs(x = "Multimodality (z-standardized)",
