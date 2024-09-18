@@ -35,6 +35,8 @@ Loo model comparision requires the loo() function from brms (model_loo = loo(mod
 - *Step5_2_Results_ISCanalysis.R*: On basis of the estimated models, calculates and saves all the results of the hypothesis test within each model. Also the assummption check is included in this script.
 - *Step5_3_TS_Plots.R*: Creates and saves all the result plots depicted in the paper.
 
+Additionally, this folder contains the code to generate Figure 10 (loo comparision graphic, plotting the elpd): *Create_plots_looComparision.R*
+
 #### References
 - Nastase, S. A., Gazzola, V., Hasson, U., & Keysers, C. (2019). Measuring shared responses across subjects using intersubject correlation. Social Cognitive and Affective Neuroscience, 14(6), 669–687. 
 	https://doi.org/10.1093/scan/nsz037
