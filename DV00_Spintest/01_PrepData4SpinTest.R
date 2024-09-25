@@ -2,7 +2,7 @@
 
 analysis_dir = ".../"
 setwd(analysis_dir)
-load(paste0("...", "/DV01_RS_Timescales/TS_Raut_Data_final_lausanne250_2024_09_05.RData"))
+load(paste0("...", "/DV01_RS_Timescales/TS_Raut_Data_final_lausanne250_2024_09_21.RData"))
 
 # Timescales raw
 meanTSRaut = tapply(R2data_RCRautFinal$Timescales_Raut,R2data_RCRautFinal$Region, mean)
@@ -25,7 +25,7 @@ for (i  in 1:219) {
 }
 
 # uni-multi-modal: SFC, Ji-Ito-perc
-data4spinTest$SFC = tapply(R2data_RCRautFinal$SFC_S7_Multi_seed,R2data_RCRautFinal$Region, mean)
+data4spinTest$SFC = tapply(R2data_RCRautFinal$SFC_S7_1_Diff_Multi_seed,R2data_RCRautFinal$Region, mean)
 data4spinTest$JiItoPerc = tapply(R2data_RCRautFinal$Ji_Ito_multi_perc,R2data_RCRautFinal$Region, mean)
   
 # anterior-posterior and medial-lateral trend (+ z Coordiante): absX, Y, Z
@@ -58,7 +58,7 @@ data4spinTest$WithinModZ = tapply(R2data_RCRautFinal$WithinMod_DC,R2data_RCRautF
 data4spinTest$Thickness = tapply(R2data_RCRautFinal$Stats_ThickAvg,R2data_RCRautFinal$Region, mean)
 
 
-load(paste0("...","/DV02_ISC/iscR2data_Final_2024_09_05.RData"))
+load(paste0("...","/DV02_ISC/iscR2data_Final_2024_09_21.RData"))
 sub_isc = iscR2data_Final[,c(1,3,4,6)]
 wideISC = tidyr::pivot_wider(sub_isc, names_from = "Condition", values_from = "ISC_FishZ")
 ISC_export = aggregate(Single ~ Region, data = wideISC, FUN = mean, na.action = na.omit)
