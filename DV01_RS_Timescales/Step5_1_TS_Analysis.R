@@ -61,17 +61,31 @@ rstudioapi::executeCommand("restartR")
 ### MULTIMODAL ####
 ## SFC
 #  Seven Step Single SFC
-brmodel_TSRaut_SFCindi =  brm(formula = z_logTS_Raut ~ z_SFC_S7_Multi_seed + 
-                                + z_ICV_l + z_Stats_Surf + z_Coord_z +  z_Coord_z + # control variables: cortical volume, surface area/ICV, z-Coodrdinate
-                                (1|Subject), # multilevel 
-                              family = gaussian,  data = R2data_RCRautFinal, 
-                              warmup = 1000, iter = 4000, chains = 10, cores = 5,
-                              control = list(adapt_delta = 0.99), seed = 15)
-loo_TSRaut_SFCindi = loo(brmodel_TSRaut_SFCindi)
-save(brmodel_TSRaut_SFCindi, loo_TSRaut_SFCindi, file = paste0(outDir, "/TSRaut_SFCindi.RData"))
-summary(brmodel_TSRaut_SFCindi)
+# brmodel_TSRaut_SFCindi =  brm(formula = z_logTS_Raut ~ z_SFC_S7_Multi_seed + 
+#                                 + z_ICV_l + z_Stats_Surf + z_Coord_z +  z_Coord_z + # control variables: cortical volume, surface area/ICV, z-Coodrdinate
+#                                 (1|Subject), # multilevel 
+#                               family = gaussian,  data = R2data_RCRautFinal, 
+#                               warmup = 1000, iter = 4000, chains = 10, cores = 5,
+#                               control = list(adapt_delta = 0.99), seed = 15)
+# loo_TSRaut_SFCindi = loo(brmodel_TSRaut_SFCindi)
+# save(brmodel_TSRaut_SFCindi, loo_TSRaut_SFCindi, file = paste0(outDir, "/TSRaut_SFCindi.RData"))
+# summary(brmodel_TSRaut_SFCindi)
+# rm(list = ls())
+# rstudioapi::executeCommand("restartR")
+
+# Difference between Step 7 and Step 1
+brmodel_TSRaut_SFCindiDiff =  brm(formula = z_logTS_Raut ~ z_SFC_S7_1_Diff_Multi_seed+
+                                    + z_ICV_l + z_Stats_Surf + z_Coord_z +  z_Coord_z + # control variables: cortical volume, surface area/ICV, z-Coodrdinate
+                                    (1|Subject), # multilevel
+                                  family = gaussian,  data = R2data_RCRautFinal,
+                                  warmup = 1000, iter = 4000, chains = 10, cores = 5,
+                                  control = list(adapt_delta = 0.99), seed = 15)
+loo_TSRaut_SFCindi_Diff = loo(brmodel_TSRaut_SFCindiDiff)
+save(brmodel_TSRaut_SFCindiDiff, loo_TSRaut_SFCindiDiff, file = paste0(outDir, "/TSRaut_SFCindiDiff.RData"))
+summary(brmodel_TSRaut_SFCindiDiff)
 rm(list = ls())
 rstudioapi::executeCommand("restartR")
+
 
 ## Ji-Ito-Atlas
 # Ji-Ito multimodal percentage # Warning: 

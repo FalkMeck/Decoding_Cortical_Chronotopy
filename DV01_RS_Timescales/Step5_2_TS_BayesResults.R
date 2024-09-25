@@ -44,7 +44,6 @@ hDC  = brms::hypothesis(model, h)
 write_xlsx(hDC$hypothesis, path = paste0(outDir, "/TSRaut_DC/TSRaut_DC_h.xlsx"))
 
 # Ji Ito ####
-yellowMulti = c("#cf9a30", "#7b5c1e") 
 lazyLoad("TSRaut_JiItoPerc")
 model = brmodel_TSRaut_JiItoPerc
 summary(model)
@@ -53,12 +52,20 @@ hJi_Ito = brms::hypothesis(model, h)
 write_xlsx(hJi_Ito$hypothesis,  path = paste0(outDir, "/TSRaut_JiItoPerc/TSRaut_JiItoPerc_h.xlsx"))
 
 # SFC indi ####
-lazyLoad("TSRaut_SFCindi")
-model = brmodel_TSRaut_SFCindi
+# lazyLoad("TSRaut_SFCindi")
+# model = brmodel_TSRaut_SFCindi
+# summary(model)
+# h <- c( "z_SFC_S7_Multi_seed > 0")
+# hSFC = brms::hypothesis(model, h)
+# write_xlsx(hSFC$hypothesis,  path = paste0(outDir, "/TSRaut_SFCindi/TSRaut_SFCindi_h.xlsx"))
+
+# SFC indi EDIT: 2024 09 22####
+lazyLoad("TSRaut_SFCindiDiff")
+model = brmodel_TSRaut_SFCindiDiff
 summary(model)
-h <- c( "z_SFC_S7_Multi_seed > 0")
+h <- c( "z_SFC_S7_1_Diff_Multi_seed > 0")
 hSFC = brms::hypothesis(model, h)
-write_xlsx(hSFC$hypothesis,  path = paste0(outDir, "/TSRaut_SFCindi/TSRaut_SFCindi_h.xlsx"))
+write_xlsx(hSFC$hypothesis,  path = paste0(outDir, "/TSRaut_SFCindi/TSRaut_SFCindiDiff_h.xlsx"))
  
 # XYZ ####
 lazyLoad("TSRaut_aXxY")

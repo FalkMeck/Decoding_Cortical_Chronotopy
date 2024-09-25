@@ -17,7 +17,7 @@ models = intersect(list.files(outDir, pattern = ".RData"), list.files(outDir, pa
 modelNames = sapply(strsplit(models, ".", fixed = TRUE), "[[",1)
 setwd(outDir)
 
-load(paste0(analysis_dir, "TS_Raut_Data_final_lausanne250_2024_09_05.RData"))
+load(paste0(analysis_dir, "TS_Raut_Data_final_lausanne250_2024_09_21.RData"))
 
 # RESULTS ####
 # RC ####
@@ -108,7 +108,21 @@ ggsave(paste0("DCPlot_","PaperPlot_20240610.png"), plot = DCplot_paper,
        width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
 
 # Multi Plot #####
-load( paste0(outDir, "/TSRaut_SFCindi/Plot_TSRaut_MULTplot.RData"))
+#load(paste0(outDir, "/TSRaut_SFCindi/Plot_TSRaut_MULTplotDiff.RData"))
+
+lazyLoad("TSRaut_JiItoPerc")
+model = brmodel_TSRaut_JiItoPerc
+dataJiIto = data.frame(id = model$data$Subject, z_Ji_Ito_multi_perc = model$data$z_Ji_Ito_multi_perc, 
+                       z_ICV_l = 0, z_Stats_Surf = 0, z_Coord_z = 0)
+dataJiIto = cbind(dataJiIto, fitted(model, dataJiIto, re_formula = NA))
+names(dataJiIto) = c("id", "JiIto", "ICV", "Surf", "z", "estimate", "error", "lwr", "upr")
+
+lazyLoad("TSRaut_SFCindiDiff")
+model = brmodel_TSRaut_SFCindiDiff
+dataSFC = data.frame(id = model$data$Subject,  z_SFC_S7_1_Diff_Multi_seed= model$data$z_SFC_S7_1_Diff_Multi_seed, 
+                     z_ICV_l = 0, z_Stats_Surf = 0, z_Coord_z = 0)
+dataSFC = cbind(dataSFC, fitted(model, dataSFC, re_formula = NA))
+names(dataSFC) = c("id", "SFC", "ICV", "Surf", "z", "estimate", "error", "lwr", "upr")
 
 colMulti = c("#1c5863", "#38afc7")
 colsMulti = c("Stepwise functional connectivity"="#1c5863","Ji atlas"="#38afc7")
@@ -142,7 +156,34 @@ ggsave(paste0("MultiPlot_","PaperPlot.png"), plot = MULTplot_paper,
        width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
 
 # XY ####
-load(paste0(outDir, "/TSRaut_aXxY/Plot_TSRaut_aXxY.RData"))
+# load(paste0(outDir, "/TSRaut_aXxY/Plot_TSRaut_aXxY.RData"))
+
+lazyLoad("TSRaut_aXxY")
+model = brmodel_TSRaut_aXxY
+dataX = data.frame(id = model$data$Subject,z_absCoord_x = model$data$z_absCoord_x, z_Coord_y = 0, z_Coord_z = 0, 
+                   z_Stats_Surf = 0, z_ICV_l = 0)
+dataY = data.frame(id = model$data$Subject, z_absCoord_x = 0, z_Coord_y = model$data$z_Coord_y, z_Coord_z = 0, 
+                   z_Stats_Surf = 0, z_ICV_l = 0)
+
+dataXY = data.frame(id = model$data$Subject, z_absCoord_x = model$data$z_absCoord_x, z_Coord_y = model$data$z_Coord_y, 
+                    z_ICV_l = 0, z_Stats_Surf = 0, z_Coord_z = 0)
+
+dataX = cbind(dataX, fitted(model, dataX, re_formula = NA))
+names(dataX) = c("id", "x", "y", "z", "ICV", "Surf","estimate_x", "error_x", "lwr_x", "upr_x")
+dataY = cbind(dataY, fitted(model, dataY, re_formula = NA))
+names(dataY) = c("id", "x", "y", "z", "ICV", "Surf", "estimate_y", "error_y", "lwr_y", "upr_y")
+dataXY = cbind(dataXY, fitted(model, dataXY, re_formula = NA))
+names(dataXY) = c("id", "x", "y", "ICV", "Surf", "z", "estimate", "error", "lwr", "upr")
+
+dataXY = data.frame(dataX$id, dataX$Condition, dataX$x, dataY$y, 
+                    dataX$estimate_x, dataX$lwr_x, dataX$upr_x,
+                    dataY$estimate_y, dataY$lwr_y, dataY$upr_y,
+                    dataXY$estimate, dataXY$lwr, dataXY$upr)
+
+names(dataXY) = c("id", "Condition", "x", "y",
+                  "estimate_x", "lwr_x", "upr_x", 
+                  "estimate_y", "lwr_y", "upr_y",
+                  "estiamte_XY", "lwr_XY", "upr_XY")
 
 colXY = c("#13533c", "#5ad8ac")
 colsXY = c("|x|"="#13533c","y"="#5ad8ac")
@@ -180,7 +221,55 @@ ggsave(paste0("XYPlot_","PaperPlot.png"), plot = XYplot_paper,
 
 
 # Graphmeasures all ####
-load(paste0(outDir, "/TSRaut_GM/Plot_TSRaut_GM.RData"))
+# load(paste0(outDir, "/TSRaut_GM/Plot_TSRaut_GM.RData"))
+lazyLoad("TSRaut_GM")
+model = brmodel_TSRaut_GM
+summary(model)
+
+dataDeg = data.frame(id = model$data$Subject, 
+                     z_Degree = model$data$z_Degree, z_Closeness = 0, z_Betweenness = 0, 
+                     z_PartCoef_DC = 0, z_WithinMod_DC = 0,
+                     z_Stats_Surf = 0, z_ICV_l = 0, z_Coord_z = 0)
+dataCls = data.frame(id = model$data$Subject,
+                     z_Degree = 0, z_Closeness =  model$data$z_Closeness, z_Betweenness = 0, 
+                     z_PartCoef_DC = 0, z_WithinMod_DC = 0,
+                     z_Stats_Surf = 0, z_ICV_l = 0, z_Coord_z = 0)
+dataBtw = data.frame(id = model$data$Subject, 
+                     z_Degree = 0, z_Closeness = 0, z_Betweenness =  model$data$z_Betweenness, 
+                     z_PartCoef_DC = 0, z_WithinMod_DC = 0,
+                     z_Stats_Surf = 0, z_ICV_l = 0, z_Coord_z = 0)
+dataPtC = data.frame(id = model$data$Subject, 
+                     z_Degree =0, z_Closeness = 0, z_Betweenness = 0, 
+                     z_PartCoef_DC =  model$data$z_PartCoef_DC, z_WithinMod_DC = 0,
+                     z_Stats_Surf = 0, z_ICV_l = 0, z_Coord_z = 0)
+dataWMz = data.frame(id = model$data$Subject,
+                     z_Degree = 0, z_Closeness = 0, z_Betweenness = 0, 
+                     z_PartCoef_DC = 0, z_WithinMod_DC = model$data$z_WithinMod_DC,
+                     z_Stats_Surf = 0, z_ICV_l = 0, z_Coord_z = 0)
+
+dataDeg = cbind(dataDeg, fitted(model, dataDeg, re_formula = NA))
+names(dataDeg) = c("id", "Deg", "Cls", "Btw", "PtC", "WMz", "ICV", "Surf","z","estimate_Deg", "error_Deg", "lwr_Deg", "upr_Deg")
+dataCls = cbind(dataCls, fitted(model, dataCls, re_formula = NA))
+names(dataCls) = c("id", "Deg", "Cls", "Btw", "PtC", "WMz", "ICV", "Surf","z","estimate_Cls", "error_Cls", "lwr_Cls", "upr_Cls")
+dataBtw = cbind(dataBtw, fitted(model, dataBtw, re_formula = NA))
+names(dataBtw) = c("id",  "Deg", "Cls", "Btw", "PtC", "WMz", "ICV", "Surf","z","estimate_Btw", "error_Btw", "lwr_Btw", "upr_Btw")
+dataPtC = cbind(dataPtC, fitted(model, dataPtC, re_formula = NA))
+names(dataPtC) = c("id",  "Deg", "Cls", "Btw", "PtC", "WMz", "ICV", "Surf","z","estimate_PtC", "error_PtC", "lwr_PtC", "upr_PtC")
+dataWMz = cbind(dataWMz, fitted(model, dataWMz, re_formula = NA))
+names(dataWMz) = c("id","Deg", "Cls", "Btw", "PtC", "WMz", "ICV", "Surf","z","estimate_WMz", "error_WMz", "lwr_WMz", "upr_WMz")
+
+dataGM = data.frame(dataDeg$id, dataDeg$Deg, dataCls$Cls, dataBtw$Btw,dataPtC$PtC, dataWMz$WMz, 
+                    dataDeg$estimate_Deg, dataDeg$lwr_Deg, dataDeg$upr_Deg,
+                    dataCls$estimate_Cls, dataCls$lwr_Cls, dataCls$upr_Cls, 
+                    dataBtw$estimate_Btw, dataBtw$lwr_Btw, dataBtw$upr_Btw, 
+                    dataPtC$estimate_PtC, dataPtC$lwr_PtC, dataPtC$upr_PtC, 
+                    dataWMz$estimate_WMz, dataWMz$lwr_WMz, dataWMz$upr_WMz)
+names(dataGM) = c("id", "Deg", "Cls", "Btw", "PtC", "WMz",
+                  "estimate_Deg", "lwr_Deg", "upr_Deg", 
+                  "estimate_Cls", "lwr_Cls", "upr_Cls", 
+                  "estimate_Btw", "lwr_Btw", "upr_Btw",
+                  "estimate_PtC", "lwr_PtC", "upr_PtC",
+                  "estimate_WMz", "lwr_WMz", "upr_WMz")
 
 # #95d840
 colGM = c("#456a16","#6fa923","#95d840", "#b9e580", "#dcf2c0")
@@ -240,7 +329,16 @@ ggsave(paste0("GMPlot_","PaperPlot.png"), plot = GMplot_paper,
        width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
 
 # Surface based morphometry thickness ####
-load(paste0(outDir, "/TSRaut_SBMt/Plot_TSRaut_SBMt.RData"))
+#load(paste0(outDir, "/TSRaut_SBMt/Plot_TSRaut_SBMt.RData"))
+lazyLoad("TSRaut_SBMt")
+model = brmodel_TSRaut_SBMt
+
+dataSBMt = data.frame(id = model$data$Subject,z_Stats_Thick = model$data$z_Stats_Thick, 
+                      z_Stats_Surf = 0, z_ICV_l = 0, z_Coord_z = 0)
+
+dataSBMt = cbind(dataSBMt, fitted(model, dataSBMt, re_formula = NA))
+names(dataSBMt) = c("id", "SBMt", "ICV", "Surf","z","estimate_SBMt", "error_SBMt", "lwr_SBMt", "upr_SBMt")
+
 
 colThick = "#fce303" # #fde725 ##fce303
 colsThick = c("Cortical thickness" = "#fce303")

@@ -70,9 +70,9 @@ tic
   SFC_calculation_JS()
   if multi_seed, SFC_calculation_multi_JS(), end
   GLM_2nd_level()
-  export_node_SFC()
   normalize_anat() % and prep for Bids
-  export_indiv_SFC()
+  export_indiv_SFC() % OLD VERSION
+  calculate_differece_7_1_and_export_indiv_SFC() % NEW VERSION
 toc
 
 %% Add header information to the rs-files
@@ -742,152 +742,6 @@ toc
         end
     end
 
-%% Export SFC values (per subject) on Node-Level
-% Scale2 = lausanne120
-% Scale3 = lausanne250
-
-% num_steps = 7;
-
-    function [] = export_node_SFC()
-        
-        % parcellations and scales
-        parc = {'scale1', 'scale2', 'scale3', 'scale4';...
-            'aparc', 'lausanne120', 'lausanne250', 'lausanne500'};
-        
-        % used Seeds and multi-seed
-        seeds = {'LeftAuditory', 'LeftSomatosensory', 'LeftVisual', 'Multi_seed', ...
-            'RightAuditory',  'RightSomatosensory', 'RightVisual'};
-        
-        colNames = [{'Subject', 'Template', 'Region'},seeds]; % column names for output table
-        
-        for p = 3 %1:size(parc,2)
-            % load translator: what area has what number in MSBP
-            translator = readtable([msbp_atlas_dir, 'transS',parc{1,p}(2:end), '.csv']);
-            
-            atlas_nii = [msbp_atlas_dir, 'sub-01_label-L2018_desc-',parc{1,p},'_atlas.nii'];
-            atlas = load_untouch_nii(atlas_nii);
-            
-            for i = 1:numel(subjectNames) % 1:numel(subjectNames)
-                disp(subjectNames{i});
-                output = cell(size(translator,1),numel(seeds)+3); % create Output for all seeds this subject
-                subject_Dir = fullfile(study_dir, subjectNames{i},'SFC_analysis\');
-                
-                % All step 7 files, num_steps = 7
-                sfc_imgs = cell(numel(seeds),1);
-                for s = 1:numel(seeds)
-                    sfc_imgs{s} = [subject_Dir, seeds{s}, filesep, subjectNames{i}, '_SFC_', num2str(num_steps),'_', seeds{s},'.nii'];
-                end
-                
-                % USE COREGISTER (RESLICE) to coregister sfc maps to atlas
-                % size
-                clear jobs;
-                % bring individual seven Map to size of atlas...
-                jobs{1}.spm.spatial.coreg.write.ref = {atlas_nii};
-                jobs{1}.spm.spatial.coreg.write.source = sfc_imgs;
-                jobs{1}.spm.spatial.coreg.write.roptions.interp = 4;
-                jobs{1}.spm.spatial.coreg.write.roptions.wrap = [0 0 0];
-                jobs{1}.spm.spatial.coreg.write.roptions.mask = 0;
-                jobs{1}.spm.spatial.coreg.write.roptions.prefix = 'atl_';
-                % ALREADY GETS FLIPPED, YEY
-                
-                spm_jobman('run', jobs); %RUN
-                clear jobs;
-                
-                if ~exist(fullfile(subject_Dir, '_SFC_resized'),'dir')
-                    mkdir(fullfile(subject_Dir, '_SFC_resized'));
-                end
-                
-                for s = 1:numel(seeds) % for each seed
-                    disp(seeds{s});
-                    % move the resized sfc_map
-                    sfc_resized = [subject_Dir, seeds{s}, filesep,'atl_' ,subjectNames{i}, '_SFC_', num2str(num_steps),'_', seeds{s},'.nii'];
-                    movefile(sfc_resized, fullfile(subject_Dir, '_SFC_resized'));
-                    
-                    % load the map
-                    sfc_map = load_untouch_nii([subject_Dir, '_SFC_resized', filesep,'atl_' ,subjectNames{i}, '_SFC_', num2str(num_steps),'_', seeds{s},'.nii']);
-                    
-                    for r = 1:size(translator,1) % for each area
-                        % disp(translator.region{r});
-                        if s == 1
-                            output{r,1} =  subjectNames{i};
-                            output{r,2} =  parc{2,p};
-                            output{r,3} =  translator.region{r};
-                        end
-                        % get the sfc values of that area
-                        sfc_values = sfc_map.img(atlas.img == translator.msbpROI(r));
-                        output{r,s+3} = mean(sfc_values, 'all', 'omitnan');
-                        
-                    end
-                end
-                
-                % save out put for that subject
-                outTab = cell2table(output, 'VariableNames', colNames);
-                outName = [subject_Dir, subjectNames{i}, '_SFC_', num2str(num_steps),'_', parc{2,p},'.csv'];
-                writetable(outTab, outName);
-                
-                disp(['DONE ', num2str(i),'/', num2str(numel(subjectNames))]);
-            end % repeat for subjects
-            
-            % Second level: insteach of sfc maps use contrast maps
-            disp('Second_Level');
-            output = cell(size(translator,1),numel(seeds)+3); % create Output for all seeds this subject
-            second_Dir = fullfile(study_dir, '_SFC_Second_Level\');
-            
-            % All step 7 files, num_steps = 7
-            t_imgs = cell(numel(seeds),1);
-            for s = 1:numel(seeds)
-                t_imgs{s} = [second_Dir, seeds{s}, '\spmT_0001.nii'];
-            end
-            
-            % USE COREGISTER (RESLICE) to coregister sfc maps to atlas
-            % size
-            clear jobs;
-            % bring individual seven Map to size of atlas...
-            jobs{1}.spm.spatial.coreg.write.ref = {atlas_nii};
-            jobs{1}.spm.spatial.coreg.write.source = t_imgs;
-            jobs{1}.spm.spatial.coreg.write.roptions.interp = 4;
-            jobs{1}.spm.spatial.coreg.write.roptions.wrap = [0 0 0];
-            jobs{1}.spm.spatial.coreg.write.roptions.mask = 0;
-            jobs{1}.spm.spatial.coreg.write.roptions.prefix = 'atl_';
-            % ALREADY GETS FLIPPED, YEY
-            
-            spm_jobman('run', jobs); %RUN
-            clear jobs;
-            
-            if ~exist(fullfile(second_Dir, '_SFC_resized'),'dir')
-                mkdir(fullfile(second_Dir, '_SFC_resized'));
-            end
-            
-            for s = 1:numel(seeds) % for each seed
-                disp(seeds{s});
-                % move the resized sfc_map
-                t_resized = [second_Dir, seeds{s}, filesep, 'atl_spmT_0001.nii'];
-                movefile(t_resized, [second_Dir, '_SFC_resized\',seeds{s}, '_Step_', num2str(num_steps), '_spmT_0001.nii']);
-                
-                % load the map
-                second_map = load_untouch_nii([second_Dir, '_SFC_resized\',seeds{s}, '_Step_', num2str(num_steps), '_spmT_0001.nii']);
-                
-                for r = 1:size(translator,1) % for each area
-                    % disp(translator.region{r});
-                    if s == 1
-                        output{r,1} =  'Second_Level';
-                        output{r,2} =  parc{2,p};
-                        output{r,3} =  translator.region{r};
-                    end
-                    % get the sfc values of that area
-                    t_values = second_map.img(atlas.img == translator.msbpROI(r));
-                    output{r,s+3} = mean(t_values, 'all', 'omitnan');
-                    
-                end
-            end
-            
-            % save out put for that subject
-            outTab = cell2table(output, 'VariableNames', colNames);
-            outName = [second_Dir, 'Second_Level_tValues_Step_', num2str(num_steps),'_', parc{2,p},'.csv'];
-            writetable(outTab, outName);
-            
-        end % repeat for templates
-    end
 
 %% NORMALIZE ANATOMY FOR PARCELLATION
     function [] = normalize_anat()
@@ -1023,6 +877,109 @@ toc
                 % save out put for that subject
                 outTab = cell2table(output, 'VariableNames', colNames);
                 outName = [subject_Dir, subjectNames{i}, '_indiSFC_', num2str(num_steps),'_', parc{2,p},'.csv'];
+                writetable(outTab, outName);
+                
+                disp(['DONE ', num2str(i),'/', num2str(numel(subjectNames))]);
+            end % repeat for subjects            
+        end % repeat for templates
+    end
+%% Export SFC values (per subject) on Node-Level Individual anatomy (Not MNI)
+% Scale2 = lausanne120
+% Scale3 = lausanne250
+
+% num_steps = 7;
+
+    function [] = calculate_differece_7_1_and_export_indiv_SFC()
+        
+        % parcellations and scales
+        parc = {'scale1', 'scale2', 'scale3', 'scale4';...
+            'aparc', 'lausanne120', 'lausanne250', 'lausanne500'};
+        
+        % used Seeds and multi-seed
+%         seeds = {'LeftAuditory', 'LeftSomatosensory', 'LeftVisual', 'Multi_seed', ...
+%             'RightAuditory',  'RightSomatosensory', 'RightVisual'};
+        seeds = {'Multi_seed'};
+        
+        colNames = [{'Subject', 'Template', 'Region'},seeds]; % column names for output table
+        
+       
+        for p = 3 %1:size(parc,2)
+            % load translator: what area has what number in MSBP
+            translator = readtable([msbp_atlas_dir, 'transS',parc{1,p}(2:end), '.csv']);           
+            for i = 1:numel(subjectNames) 
+                disp(subjectNames{i});
+                subNum = sprintf('%02d',subject_num(i));
+                subject_Dir = fullfile(study_dir, subjectNames{i},'SFC_analysis\');
+                output = cell(size(translator,1),numel(seeds)+3); % create Output for all seeds this subject
+                
+                atlasMoved = [subject_Dir, filesep, 'sub-',subNum,'_label-L2018_desc-',parc{1,p},'_atlas.nii']; 
+                atlas = load_untouch_nii(atlasMoved); 
+                
+                % Step 7 and step 1
+                sfc_imgs = cell(2,1); m = 1;
+                for s = [num_steps,1]
+                    sfc_imgs{m} = [subject_Dir, seeds{1}, filesep, subjectNames{i}, '_SFC_', num2str(s),'_', seeds{1},'.nii'];
+                    m = m+1;
+                end
+                
+                               
+                % IMCALC to calculate the difference
+                if ~exist(fullfile(subject_Dir, '_SFC_diff_indi'),'dir')
+                    mkdir(fullfile(subject_Dir, '_SFC_diff_indi'));
+                end
+                clear jobs; 
+                jobs{1}.spm.util.imcalc.input = sfc_imgs;
+                jobs{1}.spm.util.imcalc.output = [subjectNames{i}, '_SFC_diff_', seeds{1}];
+                jobs{1}.spm.util.imcalc.outdir = {fullfile(subject_Dir, '_SFC_diff_indi')};
+                jobs{1}.spm.util.imcalc.expression = 'i1 - i2';
+                jobs{1}.spm.util.imcalc.var = struct('name', {}, 'value', {});
+                jobs{1}.spm.util.imcalc.options.dmtx = 0;
+                jobs{1}.spm.util.imcalc.options.mask = 0;
+                jobs{1}.spm.util.imcalc.options.interp = 1;
+                jobs{1}.spm.util.imcalc.options.dtype = 16;
+                spm_jobman('run', jobs); %RUN
+                clear jobs;
+                
+                % USE COREGISTER (RESLICE) to coregister sfc maps to atlas
+                % size
+                clear jobs;
+                % bring individual seven Map to size of atlas...
+                jobs{1}.spm.spatial.coreg.write.ref = {fullfile(subject_Dir,['sub-',subNum,'_label-L2018_desc-',parc{1,p},'_atlas.nii'])};
+                jobs{1}.spm.spatial.coreg.write.source = {fullfile(subject_Dir, '_SFC_diff_indi',...
+                    [subjectNames{i}, '_SFC_diff_', seeds{1},'.nii'])};
+                jobs{1}.spm.spatial.coreg.write.roptions.interp = 4;
+                jobs{1}.spm.spatial.coreg.write.roptions.wrap = [0 0 0];
+                jobs{1}.spm.spatial.coreg.write.roptions.mask = 0;
+                jobs{1}.spm.spatial.coreg.write.roptions.prefix = 'inAtl_';
+                % ALREADY GETS FLIPPED, YEY
+                
+                spm_jobman('run', jobs); %RUN
+                clear jobs;
+                              
+                
+                disp(seeds{1});
+                % move the resized sfc_map
+                sfc_resized = [subject_Dir, '_SFC_diff_indi', filesep,'inAtl_' ,subjectNames{i}, '_SFC_diff_', seeds{1},'.nii'];
+               
+                % load the map
+                sfc_map = load_untouch_nii(sfc_resized);
+                
+                for r = 1:size(translator,1) % for each area
+                    % disp(translator.region{r});
+                    if s == 1
+                        output{r,1} =  subjectNames{i};
+                        output{r,2} =  parc{2,p};
+                        output{r,3} =  translator.region{r};
+                    end
+                    % get the sfc values of that area
+                    sfc_values = sfc_map.img(atlas.img == translator.msbpROI(r));
+                    output{r,s+3} = mean(sfc_values, 'all', 'omitnan');
+                    
+                end
+                
+                % save out put for that subject
+                outTab = cell2table(output, 'VariableNames', colNames);
+                outName = [subject_Dir, subjectNames{i}, '_indiSFC_diff_', num2str(num_steps),'_', parc{2,p},'.csv'];
                 writetable(outTab, outName);
                 
                 disp(['DONE ', num2str(i),'/', num2str(numel(subjectNames))]);
