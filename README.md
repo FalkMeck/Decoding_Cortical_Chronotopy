@@ -99,5 +99,5 @@ Contains all code from the "raw" task fMRI nifti files over the preprocessing an
 
 
 #### Supplementary_Analysis
-Contains code that compares the two uni-to-multimodal gradient approaches from the manuscript (see folder 02_UM) with the established gradients from [Margulies et al. (2016)]https://doi.org/10.1073/pnas.1608282113 and [Sydnor et al. (2021)]https://doi.org/10.1016/j.neuron.2021.06.016
+Contains code that compares the two uni-to-multimodal gradient approaches from the manuscript (see folder 02_UM) with the established gradients from [Margulies et al. (2016)](https://doi.org/10.1073/pnas.1608282113) and [Sydnor et al. (2021)](https://doi.org/10.1016/j.neuron.2021.06.016)
 This analysis validates the methods applied in the investigation of cortical organizational schemes.
