@@ -170,6 +170,32 @@ h4 = c("z_SFC_S7_Multi_seed  = 0", # Single
 h4SFCinCond = brms::hypothesis(brmSNV_ISCz_CxSFC, h4)
 write_xlsx(h4SFCinCond$hypothesis, path = paste0(getwd(),"/h4SFCinCond","_ISC_SFC","undirected",".xlsx"))
 
+# # SFC Multimodal EDIT: Difference Map 7 - Map 1 ####
+load("brmISCz_CxSFCDiff.RData")
+summary(brmSNV_ISCz_CxSFCDiff)
+
+# Interaction effect, I think I just have to test the interactions...
+h3 = c("ConditionTriplet:z_SFC_S7_1_Diff_Multi_seed   > 0",
+       "ConditionNonet:z_SFC_S7_1_Diff_Multi_seed  - ConditionTriplet:z_SFC_S7_1_Diff_Multi_seed  > 0",
+       "ConditionComplete:z_SFC_S7_1_Diff_Multi_seed  - ConditionNonet:z_SFC_S7_1_Diff_Multi_seed  > 0")
+h3SFCInteraction = brms::hypothesis(brmSNV_ISCz_CxSFCDiff, h3)
+write_xlsx(h3SFCInteraction$hypothesis, path = paste0(getwd(),"/h3SFCInteraction","_ISC_SFCDiff",".xlsx"))
+
+# Interaction effect, I think I just have to test the interactions...
+h4 = c("z_SFC_S7_1_Diff_Multi_seed   > 0", # Single
+       "z_SFC_S7_1_Diff_Multi_seed  + ConditionTriplet:z_SFC_S7_1_Diff_Multi_seed  > 0", # Triplet
+       "z_SFC_S7_1_Diff_Multi_seed  + ConditionNonet:z_SFC_S7_1_Diff_Multi_seed  > 0", # Nonet
+       "z_SFC_S7_1_Diff_Multi_seed  + ConditionComplete:z_SFC_S7_1_Diff_Multi_seed  > 0")
+h4SFCinCond = brms::hypothesis(brmSNV_ISCz_CxSFCDiff, h4)
+write_xlsx(h4SFCinCond$hypothesis, path = paste0(getwd(),"/h4SFCinCond","_ISC_SFCDiff",".xlsx"))
+
+h4 = c("z_SFC_S7_1_Diff_Multi_seed   = 0", # Single
+       "z_SFC_S7_1_Diff_Multi_seed  + ConditionTriplet:z_SFC_S7_1_Diff_Multi_seed  = 0", # Triplet
+       "z_SFC_S7_1_Diff_Multi_seed  + ConditionNonet:z_SFC_S7_1_Diff_Multi_seed  = 0", # Nonet
+       "z_SFC_S7_1_Diff_Multi_seed  + ConditionComplete:z_SFC_S7_1_Diff_Multi_seed  = 0")
+h4SFCinCond = brms::hypothesis(brmSNV_ISCz_CxSFCDiff, h4)
+write_xlsx(h4SFCinCond$hypothesis, path = paste0(getwd(),"/h4SFCinCond","_ISC_SFCDiff","undirected",".xlsx"))
+
 # Ji Ito Multimodal ####
 load("brmISCz_CxJiIto.RData")
 summary(brmSNV_ISCz_CxJiIto)

@@ -136,15 +136,15 @@ ggsave("DCPlot_ISC_PaperPlot.png", plot = DCplot_paper,
        width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
 
 # Multimodality ####
-load("brmISCz_CxSFC.RData")
+load("brmISCz_CxSFCDiff.RData")
 load("brmISCz_CxJiIto.RData")
 
-dataSFC = data.frame(id = brmSNV_ISCz_CxSFC$data$Subject, Condition = brmSNV_ISCz_CxSFC$data$Condition,
-                     z_SFC_S7_Multi_seed = brmSNV_ISCz_CxSFC$data$z_SFC_S7_Multi_seed, z_Stats_Surf = 0, z_ICV_l = 0, z_Coord_z = 0)
+dataSFC = data.frame(id = brmSNV_ISCz_CxSFCDiff$data$Subject, Condition = brmSNV_ISCz_CxSFCDiff$data$Condition,
+                     z_SFC_S7_1_Diff_Multi_seed = brmSNV_ISCz_CxSFCDiff$data$z_SFC_S7_1_Diff_Multi_seed, z_Stats_Surf = 0, z_ICV_l = 0, z_Coord_z = 0)
 dataJiIto = data.frame(id = brmSNV_ISCz_CxJiIto$data$Subject, Condition = brmSNV_ISCz_CxJiIto$data$Condition, 
                        z_Ji_Ito_multi_perc = brmSNV_ISCz_CxJiIto$data$z_Ji_Ito_multi_perc, z_Stats_Surf = 0, z_ICV_l = 0, z_Coord_z = 0)
 
-dataSFC = cbind(dataSFC, fitted(brmSNV_ISCz_CxSFC, dataSFC, re_formula = NA))
+dataSFC = cbind(dataSFC, fitted(brmSNV_ISCz_CxSFCDiff, dataSFC, re_formula = NA))
 names(dataSFC) = c("id", "Condition", "SFC","ICV", "Surf","z","estimate_SFC", "error_SFC", "lwr_SFC", "upr_SFC")
 dataJiIto = cbind(dataJiIto, fitted(brmSNV_ISCz_CxJiIto, dataJiIto, re_formula = NA))
 names(dataJiIto) = c("id", "Condition", "JI","ICV", "Surf","z","estimate_JI", "error_JI", "lwr_JI", "upr_JI")
@@ -161,7 +161,7 @@ colsMulti = c("Stepwise functional connectivity"="#1c5863","Ji atlas"="#38afc7")
 
 MULTplot <- ggplot() +
   # SFC
-  geom_point(data = brmSNV_ISCz_CxSFC$data, aes(z_SFC_S7_Multi_seed, ISC_FishZ),
+  geom_point(data = brmSNV_ISCz_CxSFCDiff$data, aes(z_SFC_S7_1_Diff_Multi_seed, ISC_FishZ),
              alpha = .2, color = colMulti[1], size = .05) +
   # Ji atlas
   geom_point(data = brmSNV_ISCz_CxJiIto$data, aes(z_Ji_Ito_multi_perc, ISC_FishZ),
@@ -180,15 +180,16 @@ MULTplot <- ggplot() +
   theme_bw() + scale_color_manual(name = "", values = colsMulti, breaks = labels(colsMulti))
 MULTplot
 
-save(MULTplot, dataSFC, dataJiIto, dataMULT, colsMulti, colMulti, brmSNV_ISCz_CxJiIto, brmSNV_ISCz_CxSFC, file = paste0(getwd(), "/PlotISCz_MULT.RData"))
-load(paste0(getwd(), "/PlotISCz_MULT.RData"))
+save(MULTplot, dataSFC, dataJiIto, dataMULT, colsMulti, colMulti, brmSNV_ISCz_CxJiIto, brmSNV_ISCz_CxSFCDiff, file = paste0(getwd(), "/PlotISCz_MULTDiff.RData"))
+load(paste0(getwd(), "/PlotISCz_MULTDiff.RData"))
 
-MULTplot_paper = MULTplot + theme(legend.position = "top") +
+MULTplot_paper = MULTplot + theme(legend.position = "none") +
   theme(axis.text=element_text(size=11,  family="Calibri", color = "black")) +
   theme(text=element_text(size=11,  family="Calibri", color = "black")) 
 
 
-ggsave("MULTplotz_ISCz_PaperPlot.png", plot = MULTplot_paper,
+
+ggsave("MULTplotDiff_ISCz_PaperPlot.png", plot = MULTplot_paper,
        path =".../Results_ISC", 
        width = 82.3*2, height = 50*2, units = "mm", dpi = 300)
 

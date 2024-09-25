@@ -28,7 +28,7 @@ This folder contains all the code to get from the task fMRI nifti files to the f
 	- extracts the ISC values from that parcel and averages them
 	- saves all ISC values per subject in seperate files per condition
 - *Step4_PrepareAllData.R*: takes all the data from the organizational schemes and the extracted averages ISC values for all conditions of each participant and parcel and combines them into one data set for analysis. (requires all the info about participants, so the final dataset will be shared but not the particpant information)
-- *iscR2data_Final_2024_09_05.RData*: final R data set used for the Analysis.
+- *iscR2data_Final_2024_09_21.RData*: final R data set used for the Analysis.
 - *Step5_1_ISCAnalysis.R*: Loads the final data (extreme values excluded and z-scaled)
 Than calculates the models for all organizational schemes and does the model comparision.
 Loo model comparision requires the loo() function from brms (model_loo = loo(model)). This step was not done in this script but seperately for each model on a super computer, since the compting power of a desktop computer (32 GB RAM) was not enough.

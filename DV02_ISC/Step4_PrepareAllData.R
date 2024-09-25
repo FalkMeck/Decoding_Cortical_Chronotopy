@@ -20,6 +20,7 @@ varNames = c("Subject","Template", "Region", # general Info
              "DC_Class_Sing", "DC_Class_GroupPrev", "DC_Class_GroupFDR", # Diverse Club
              "SFC_S7_LeftAuditory", "SFC_S7_LeftSomatosensory", "SFC_S7_LeftVisual","SFC_S7_Multi_seed","SFC_S7_RightAuditory", "SFC_S7_RightSomatosensory", "SFC_S7_RightVisual", # SFC Step 7 individual
              "Lvl2_S7_LeftAuditory", "Lvl2_S7_LeftSomatosensory", "Lvl2_S7_LeftVisual","Lvl2_S7_Multi_seed","Lvl2_S7_RightAuditory", "Lvl2_S7_RightSomatosensory", "Lvl2_S7_RightVisual",  # SFC second Level Step 7 t-values
+             "SFC_S7_1_Diff_Multi_seed", # EDIT (2024_09_21)
              "Network", "Network_percentage", "Ji_Ito", "Ji_Ito_adj", "Ji_Ito_multi_perc", # Overlap with Glasser Atlas
              "Coord_x","Coord_y","Coord_z", # position
              "Degree", "Closeness", "Betweenness","PartCoef_RC", "WithinMod_RC", # Grpah measures of centrality
@@ -72,6 +73,9 @@ for (t in 1:length(templates)) {
     }   
     
     DCSing = read.csv(paste0(analysis_dir,"2_RCAnalysis/",subjectNames[i],"/",templates[t],"/DC_Class_",templates[t],"_",subjectNames[i],".csv"))
+    
+    # Load evel SFC maps Differce (2024_09_21)
+    SFC_Diff = read.csv(paste0(analysis_dir,subjectNames[i],'/SFC_analysis/', subjectNames[i],'_indiSFC_diff_7_',templates[t],'.csv'))
     
     Coords = read.csv(paste0(analysis_dir, subjectNames[i],"/Coord_", subjectNames[i],"_",templates[t],".csv"))
     Coords$Region = ifelse(Coords$hemi == "left", paste0("ctx-lh-",Coords$name),paste0("ctx-rh-",Coords$name))
@@ -135,6 +139,11 @@ for (t in 1:length(templates)) {
       SFCpos2 = c(1:length(varNames))[varNames == "Lvl2_S7_LeftAuditory"]
       iscR2data[iscR2data$Subject == subjectNames[i] & iscR2data$Condition == conditions[c] & iscR2data$Region == regions[r], SFCpos2:(SFCpos2+6)] = 
         SFC_Lvl2[SFC_Lvl2$Region == regions[r], 4:10]
+      
+      # EDIT: SFC Differences
+      SFCposDiff = c(1:length(varNames))[varNames == "SFC_S7_1_Diff_Multi_seed"]
+      iscR2data[iscR2data$Subject == subjectNames[i] & iscR2data$Condition == conditions[c] & iscR2data$Region == regions[r], SFCposDiff] = 
+        SFC_Diff[SFC_Diff$Region == regions[r], 4]
       
       # Glasser Atlas
       ATLpos = c(1:length(varNames))[varNames == "Network"]

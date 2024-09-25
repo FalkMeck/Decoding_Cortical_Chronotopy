@@ -59,19 +59,35 @@ rstudioapi::restartSession()
 
 # Uni-multi ####
 # SFC
-brmSNV_ISCz_CxSFC = brm(formula = ISC_FishZ  ~ 1 + Condition * z_SFC_S7_Multi_seed + 
-                          z_Stats_Surf + z_ICV_l +  z_Coord_z + 
-                          (1|Subject), 
-                        data = iscR2data_Final,
-                        prior = c(set_prior("normal(0,5)", class = "b"),
-                                  set_prior("student_t(3,0,2.5)", class = "sd")), 
-                        family = skew_normal(link = "identity", link_sigma = "log", link_alpha = "identity"), 
-                        warmup = 1000, iter = 4000, chains = 10, cores = 5,
-                        control = list(adapt_delta = 0.8, max_treedepth = 15), seed = 15, save_pars = save_pars(all=TRUE), sample_prior = TRUE)
-save(brmSNV_ISCz_CxSFC, file = paste0(outDir, "/brmISCz_CxSFC.RData"))
-summary(brmSNV_ISCz_CxSFC)
+# brmSNV_ISCz_CxSFC = brm(formula = ISC_FishZ  ~ 1 + Condition * z_SFC_S7_Multi_seed + 
+#                           z_Stats_Surf + z_ICV_l +  z_Coord_z + 
+#                           (1|Subject), 
+#                         data = iscR2data_Final,
+#                         prior = c(set_prior("normal(0,5)", class = "b"),
+#                                   set_prior("student_t(3,0,2.5)", class = "sd")), 
+#                         family = skew_normal(link = "identity", link_sigma = "log", link_alpha = "identity"), 
+#                         warmup = 1000, iter = 4000, chains = 10, cores = 5,
+#                         control = list(adapt_delta = 0.8, max_treedepth = 15), seed = 15, save_pars = save_pars(all=TRUE), sample_prior = TRUE)
+# save(brmSNV_ISCz_CxSFC, file = paste0(outDir, "/brmISCz_CxSFC.RData"))
+# summary(brmSNV_ISCz_CxSFC)
+# rm(list = ls())
+rstudioapi::restartSession()
+
+# EDIT: SFC Diff 7 1
+brmSNV_ISCz_CxSFCDiff = brm(formula = ISC_FishZ  ~ 1 + Condition * z_SFC_S7_1_Diff_Multi_seed +
+                              z_Stats_Surf + z_ICV_l +  z_Coord_z +
+                              (1|Subject),
+                            data = iscR2data_Final,
+                            prior = c(set_prior("normal(0,5)", class = "b"),
+                                      set_prior("student_t(3,0,2.5)", class = "sd")),
+                            family = skew_normal(link = "identity", link_sigma = "log", link_alpha = "identity"),
+                            warmup = 1000, iter = 4000, chains = 10, cores = 5,
+                            control = list(adapt_delta = 0.8, max_treedepth = 15), seed = 15, save_pars = save_pars(all=TRUE), sample_prior = TRUE)
+save(brmSNV_ISCz_CxSFCDiff, file = paste0(outDir, "/brmISCz_CxSFCDiff.RData"))
+summary(brmSNV_ISCz_CxSFCDiff)
 rm(list = ls())
 rstudioapi::restartSession()
+
 
 # Ji Ito
 brmSNV_ISCz_CxJiIto = brm(formula = ISC_FishZ  ~ 1 + Condition * z_Ji_Ito_multi_perc + 
