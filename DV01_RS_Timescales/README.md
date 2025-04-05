@@ -1,4 +1,4 @@
-# Restin-state timescale analysis
+# Resting-state timescale analysis
 This folder contains all the code to get from the resting-state fMRI nifti files to the finished model comparision.
 
 - Step1_Preprocessing: The preprocessing of the data is based on the Methods presented in Ito et al. (2020). The used code also was also partially taken from https://github.com/ColeLab/hierarchy2020
