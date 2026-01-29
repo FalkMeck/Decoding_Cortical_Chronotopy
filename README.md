@@ -1,5 +1,5 @@
 # Decoding Cortical Chronotopy
-This repository contains all the code used for the analyses in the paper _Decoding Cortical Chronotopy - Comparing the Influence of Different Cortical Organizational Schemes_ (Mecklenbrauck, Sepulcre, Fehring, & Schubotz, in preparation). This also includes the final datasets the model estimation and comparision was run on.
+This repository contains all the code used for the analyses in the paper _Decoding Cortical Chronotopy - Comparing the Influence of Different Cortical Organizational Schemes_ (Mecklenbrauck, Sepulcre, Fehring, & Schubotz, 2024). This also includes the final datasets the model estimation and comparision was run on.
 
 Additionally, you can download one examplary, minimally processed participant, to run test the code [here](https://uni-muenster.sciebo.de/s/zCNXmi0KUONf1Pz).
 
